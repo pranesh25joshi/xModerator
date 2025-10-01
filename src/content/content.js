@@ -27,6 +27,9 @@
 
       console.log('🛡️ xModerator initialized successfully!', { isEnabled, settings });
 
+      // Inject CSS styles
+      injectCSS();
+
       // Show a brief notification that extension is active
       showExtensionStatus();
 
@@ -136,7 +139,104 @@
     console.log('👁️ xModerator: Observer started and monitoring tweets');
   }
 
-  // Stop content monitoring
+  // Inject CSS styles for blocking overlays
+  function injectCSS() {
+    if (document.getElementById('xmoderator-styles')) return; // Already injected
+    
+    const style = document.createElement('style');
+    style.id = 'xmoderator-styles';
+    style.textContent = `
+      /* Hide overlay styles */
+      .xmoderator-blocked-overlay {
+        background: linear-gradient(45deg, #ff6b35, #ff8c42);
+        border: 2px solid #ff6b35;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 10px 0;
+        text-align: center;
+        position: relative;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+      
+      .xmoderator-blocked-content {
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      
+      .xmoderator-blocked-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      
+      .xmoderator-blocked-text {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 12px;
+      }
+      
+      .xmoderator-show-anyway {
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      
+      .xmoderator-show-anyway:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-1px);
+      }
+      
+      /* Blur overlay styles */
+      .xmoderator-blur-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(255, 107, 53, 0.95);
+        border-radius: 12px;
+        padding: 16px 24px;
+        z-index: 1001;
+        backdrop-filter: blur(2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      }
+      
+      .xmoderator-blur-content {
+        text-align: center;
+        color: white;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+      
+      .xmoderator-blur-text {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+      
+      /* Block user button */
+      .xmoderator-block-user {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      
+      .xmoderator-block-user:hover {
+        background: #c82333;
+      }
+    `;
+    
+    document.head.appendChild(style);
+    console.log('✅ xModerator: CSS styles injected');
+  }
   function stopContentMonitoring() {
     if (window.xModeratorObserver) {
       window.xModeratorObserver.disconnect();
