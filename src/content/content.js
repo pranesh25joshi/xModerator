@@ -33,10 +33,31 @@
       // Add test button for verification
       addTestButton();
 
+      // TEST: Verify content detection is working
+      console.log('🧪 xModerator: Testing content detection...');
+      if (contentDetector && typeof contentDetector.analyzeContent === 'function') {
+        const testResult = contentDetector.analyzeContent("wished i was an adult.", "testuser", "medium");
+        console.log('🧪 xModerator: Test analysis result for "wished i was an adult.":', testResult);
+        
+        if (testResult.shouldBlock) {
+          console.log('✅ xModerator: Content detector is working - would block adult content!');
+        } else {
+          console.log('❌ xModerator: Content detector NOT working - should have detected adult content!');
+        }
+      } else {
+        console.log('❌ xModerator: Content detector not available!');
+      }
+
       // Start monitoring
       if (isEnabled) {
         startContentMonitoring();
         addBlockedCounter();
+        
+        // Scan existing content immediately after setup
+        console.log('🔍 xModerator: Scanning existing content on page...');
+        setTimeout(() => {
+          scanExistingTweets();
+        }, 2000); // Give page 2 seconds to fully load
       }
 
       // Listen for settings changes
@@ -128,35 +149,20 @@
   function scanExistingTweets() {
     console.log('🔍 xModerator: Scanning existing tweets...');
     
-    // Try multiple selectors that X.com might use
-    const possibleSelectors = [
-      '[data-testid="tweet"]',
-      '[data-testid="cellInnerDiv"]', 
-      'article[data-testid="tweet"]',
-      'article',
-      '[role="article"]',
-      '.css-1dbjc4n[data-testid="tweet"]'
-    ];
+    // Focus on the correct X.com selector based on real HTML
+    const tweetSelector = 'article[data-testid="tweet"]';
+    const tweets = document.querySelectorAll(tweetSelector);
     
-    let foundTweets = [];
+    console.log(`🔍 xModerator: Found ${tweets.length} tweets with selector: ${tweetSelector}`);
+    console.log('🔍 xModerator: Current URL:', window.location.href);
     
-    possibleSelectors.forEach(selector => {
-      const elements = document.querySelectorAll(selector);
-      console.log(`🔍 xModerator: Selector "${selector}" found ${elements.length} elements`);
-      
-      if (elements.length > 0) {
-        foundTweets = [...elements];
-        console.log('✅ xModerator: Using selector:', selector);
-      }
-    });
+    // Debug: Log the page structure
+    console.log('🔍 xModerator: Page structure analysis:');
+    console.log('- Total articles:', document.querySelectorAll('article').length);
+    console.log('- Articles with data-testid="tweet":', tweets.length);
+    console.log('- Elements with data-testid="tweetText":', document.querySelectorAll('[data-testid="tweetText"]').length);
     
-    // Also log what's actually in the DOM
-    console.log('🔍 xModerator: Current page structure:');
-    console.log('- Articles:', document.querySelectorAll('article').length);
-    console.log('- Data-testid elements:', document.querySelectorAll('[data-testid]').length);
-    console.log('- Role=article:', document.querySelectorAll('[role="article"]').length);
-    
-    if (foundTweets.length === 0) {
+    if (tweets.length === 0) {
       console.log('❌ xModerator: No tweets found with any selector!');
       console.log('� xModerator: Trying to find any content elements...');
       
@@ -175,8 +181,8 @@
         }
       });
     } else {
-      console.log(`📊 xModerator: Found ${foundTweets.length} tweets to scan`);
-      foundTweets.forEach(tweet => processTweet(tweet));
+      console.log(`📊 xModerator: Found ${tweets.length} tweets to scan`);
+      tweets.forEach(tweet => processTweet(tweet));
     }
   }
 
@@ -198,8 +204,14 @@
 
       console.log('🔍 xModerator: Processing tweet:', {
         username: tweetData.username,
-        text: tweetData.text.substring(0, 100) + '...'
+        text: tweetData.text.substring(0, 100) + '...',
+        fullText: tweetData.text
       });
+
+      // Quick test for adult keyword (from your HTML example)
+      if (tweetData.text.toLowerCase().includes('adult')) {
+        console.log('🔍 xModerator: ⚠️  FOUND "adult" keyword in tweet text!');
+      }
 
       // Check blocked users first
       if (settings.blockedUsers.includes(tweetData.username.toLowerCase())) {
@@ -257,6 +269,8 @@
     };
 
     try {
+      console.log('🔍 xModerator: Extracting data from tweet element:', tweetElement);
+      
       // Try multiple selectors for tweet text (X.com keeps changing these)
       const textSelectors = [
         '[data-testid="tweetText"]',
@@ -273,36 +287,42 @@
         textElement = tweetElement.querySelector(selector);
         if (textElement && textElement.textContent?.trim()) {
           data.text = textElement.textContent || textElement.innerText || '';
-          console.log(`✅ Found text using selector: ${selector}`);
+          console.log(`✅ Found text using selector: ${selector} -> "${data.text}"`);
           break;
+        } else {
+          console.log(`❌ Selector "${selector}" found no text content`);
         }
       }
       
       // If no specific selector worked, try to get any text content
       if (!data.text && tweetElement.textContent) {
         data.text = tweetElement.textContent;
-        console.log('✅ Using fallback text extraction');
+        console.log('✅ Using fallback text extraction:', data.text.substring(0, 100));
       }
 
       // Try multiple selectors for username
       const usernameSelectors = [
-        '[data-testid="User-Name"] a[href*="/"]',
         'a[href^="/"][role="link"]',
-        'span:contains("@")',
-        '.css-901oao[dir="ltr"]'
+        '[data-testid="User-Name"] a[href*="/"]',
+        'a[href^="/"]'
       ];
       
       let usernameElement = null;
       for (const selector of usernameSelectors) {
-        usernameElement = tweetElement.querySelector(selector);
-        if (usernameElement) {
-          const href = usernameElement.getAttribute('href');
-          if (href && href.startsWith('/') && href.length > 1) {
+        const elements = tweetElement.querySelectorAll(selector);
+        console.log(`🔍 Username selector "${selector}" found ${elements.length} elements`);
+        
+        for (const element of elements) {
+          const href = element.getAttribute('href');
+          if (href && href.startsWith('/') && href.length > 1 && !href.includes('/status/')) {
             data.username = href.replace('/', '').split('/')[0];
             console.log(`✅ Found username using selector: ${selector} -> ${data.username}`);
+            usernameElement = element;
             break;
           }
         }
+        
+        if (usernameElement) break;
       }
 
       // Check if retweet
@@ -311,8 +331,9 @@
       // Check if has media
       data.hasMedia = tweetElement.querySelector('[data-testid="tweetPhoto"], [data-testid="videoPlayer"], img, video') !== null;
 
-      console.log('📝 Extracted tweet data:', {
+      console.log('📝 Final extracted tweet data:', {
         textLength: data.text.length,
+        textPreview: data.text.substring(0, 50) + '...',
         username: data.username,
         isRetweet: data.isRetweet,
         hasMedia: data.hasMedia
@@ -491,14 +512,31 @@
 
   // Create a fake tweet for testing
   function createTestTweet() {
+    console.log('🧪 xModerator: Creating test tweet...');
+    
+    // Test the exact content from your HTML example
     const testContent = [
+      'wished i was an adult.',
       'This is a test tweet about politics and elections',
-      'Adult content test: This contains nsfw material',
       'Violence test: This tweet talks about weapons and fighting',
       'Spam test: Click here for free money guaranteed!'
     ];
 
     const randomContent = testContent[Math.floor(Math.random() * testContent.length)];
+    
+    console.log('🧪 xModerator: Testing with content:', randomContent);
+    
+    // Run content detection test
+    if (contentDetector) {
+      const analysis = contentDetector.analyzeContent(randomContent, 'testuser', settings.sensitivity);
+      console.log('🧪 xModerator: Content analysis result:', analysis);
+      
+      if (analysis.shouldBlock) {
+        console.log('✅ xModerator: Filter is working! Content would be blocked:', analysis.categories);
+      } else {
+        console.log('❌ xModerator: Filter did not catch this content');
+      }
+    }
     
     // Create fake tweet element
     const fakeTweet = document.createElement('div');
