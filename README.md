@@ -85,7 +85,7 @@ xModerator is optimized for all Chromium-based browsers with enhanced Arc Browse
 
 1. **Download Extension**
    - Go to [Releases](https://github.com/pranesh25joshi/xmoderator/releases/latest)
-   - Download `xmoderator-CHROMIUM-v1.0.9.zip`
+   - Download `xmoderator-CHROMIUM-v1.1.0.zip`
    - Extract the ZIP file to a folder
 
 2. **Install in Chromium Browser**
