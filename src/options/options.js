@@ -23,17 +23,12 @@ class OptionsManager {
   }
 
   async loadData() {
-    // Load settings
-    const settingsResponse = await this.sendMessage({ action: 'getSettings' });
-    if (settingsResponse.success) {
-      this.settings = settingsResponse.settings || this.getDefaultSettings();
-    }
-
-    // Load stats
-    const statsResponse = await this.sendMessage({ action: 'getStats' });
-    if (statsResponse.success) {
-      this.stats = statsResponse.stats || {};
-    }
+    // Load settings directly from storage
+    const storageManager = new StorageManager();
+    this.settings = await storageManager.getSettings();
+    this.stats = await storageManager.getStats();
+    
+    console.log('📊 Options: Loaded data', { settings: this.settings, stats: this.stats });
   }
 
   getDefaultSettings() {
@@ -410,16 +405,15 @@ class OptionsManager {
 
   async saveSettings() {
     try {
-      const response = await this.sendMessage({ 
-        action: 'saveSettings', 
-        settings: this.settings 
-      });
+      const storageManager = new StorageManager();
+      const success = await storageManager.saveSettings(this.settings);
 
-      if (response.success) {
+      if (success) {
         this.markSaved();
         this.showToast('Settings saved', 'success');
+        console.log('✅ Options: Settings saved successfully', this.settings);
       } else {
-        throw new Error(response.error);
+        throw new Error('Storage operation failed');
       }
     } catch (error) {
       console.error('Error saving settings:', error);

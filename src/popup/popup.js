@@ -22,17 +22,12 @@ class PopupManager {
   }
 
   async loadData() {
-    // Load settings
-    const settingsResponse = await this.sendMessage({ action: 'getSettings' });
-    if (settingsResponse.success) {
-      this.settings = settingsResponse.settings;
-    }
-
-    // Load stats
-    const statsResponse = await this.sendMessage({ action: 'getStats' });
-    if (statsResponse.success) {
-      this.stats = statsResponse.stats;
-    }
+    // Load settings and stats directly from storage
+    const storageManager = new StorageManager();
+    this.settings = await storageManager.getSettings();
+    this.stats = await storageManager.getStats();
+    
+    console.log('📊 Popup: Loaded data', { settings: this.settings, stats: this.stats });
   }
 
   setupEventListeners() {
@@ -92,17 +87,22 @@ class PopupManager {
 
   async toggleExtension(enabled) {
     try {
-      const response = await this.sendMessage({ 
-        action: 'toggleExtension', 
-        enabled 
-      });
+      // Update local settings
+      this.settings.enabled = enabled;
+      
+      // Save to storage
+      const storageManager = new StorageManager();
+      const success = await storageManager.saveSettings(this.settings);
 
-      if (response.success) {
-        this.settings.enabled = enabled;
+      if (success) {
         this.updateUI();
         this.showSuccess(enabled ? 'Extension enabled' : 'Extension disabled');
+        console.log('✅ Popup: Extension toggled', { enabled });
+        
+        // Send message to content script
+        this.sendMessageToTab({ action: 'toggle', enabled });
       } else {
-        throw new Error(response.error || 'Failed to toggle extension');
+        throw new Error('Failed to save settings');
       }
     } catch (error) {
       console.error('Error toggling extension:', error);
@@ -123,15 +123,14 @@ class PopupManager {
       this.settings.categories[category] = enabled;
 
       // Save to storage
-      const response = await this.sendMessage({ 
-        action: 'saveSettings', 
-        settings: this.settings 
-      });
+      const storageManager = new StorageManager();
+      const success = await storageManager.saveSettings(this.settings);
 
-      if (response.success) {
+      if (success) {
         this.showSuccess(`${this.getCategoryDisplayName(category)} filter ${enabled ? 'enabled' : 'disabled'}`);
+        console.log('✅ Popup: Category updated', { category, enabled });
       } else {
-        throw new Error(response.error || 'Failed to save settings');
+        throw new Error('Failed to save settings');
       }
     } catch (error) {
       console.error('Error updating category:', error);
@@ -238,6 +237,22 @@ class PopupManager {
         notification.remove();
       }
     }, 3000);
+  }
+
+  async sendMessageToTab(message) {
+    try {
+      // Get current active tab
+      const [tab] = await chrome.tabs.query({ 
+        active: true, 
+        currentWindow: true 
+      });
+
+      if (tab && (tab.url.includes('twitter.com') || tab.url.includes('x.com'))) {
+        chrome.tabs.sendMessage(tab.id, message);
+      }
+    } catch (error) {
+      console.error('Error sending message to tab:', error);
+    }
   }
 
   async sendMessage(message) {

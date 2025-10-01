@@ -30,6 +30,9 @@
       // Show a brief notification that extension is active
       showExtensionStatus();
 
+      // Add test button for verification
+      addTestButton();
+
       // Start monitoring
       if (isEnabled) {
         startContentMonitoring();
@@ -360,6 +363,80 @@
       notification.style.opacity = '0';
       setTimeout(() => notification.remove(), 300);
     }, 3000);
+  }
+
+  // Add test button to verify filtering works
+  function addTestButton() {
+    const testButton = document.createElement('button');
+    testButton.style.cssText = `
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 9999;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    `;
+    testButton.innerHTML = '🧪 Test Filter';
+    testButton.onclick = createTestTweet;
+    document.body.appendChild(testButton);
+  }
+
+  // Create a fake tweet for testing
+  function createTestTweet() {
+    const testContent = [
+      'This is a test tweet about politics and elections',
+      'Adult content test: This contains nsfw material',
+      'Violence test: This tweet talks about weapons and fighting',
+      'Spam test: Click here for free money guaranteed!'
+    ];
+
+    const randomContent = testContent[Math.floor(Math.random() * testContent.length)];
+    
+    // Create fake tweet element
+    const fakeTweet = document.createElement('div');
+    fakeTweet.setAttribute('data-testid', 'tweet');
+    fakeTweet.style.cssText = `
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      width: 300px;
+      background: white;
+      border: 1px solid #e1e8ed;
+      border-radius: 12px;
+      padding: 15px;
+      z-index: 9998;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    `;
+    
+    fakeTweet.innerHTML = `
+      <div data-testid="User-Name">
+        <a href="/testuser">@testuser</a>
+      </div>
+      <div data-testid="tweetText">${randomContent}</div>
+    `;
+    
+    document.body.appendChild(fakeTweet);
+    
+    console.log('🧪 xModerator: Created test tweet with content:', randomContent);
+    
+    // Process the fake tweet
+    setTimeout(() => {
+      processTweet(fakeTweet);
+    }, 100);
+    
+    // Remove test tweet after 10 seconds if not filtered
+    setTimeout(() => {
+      if (document.body.contains(fakeTweet)) {
+        fakeTweet.remove();
+      }
+    }, 10000);
   }
 
   // Listen for messages from popup/options
