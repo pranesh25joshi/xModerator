@@ -23,8 +23,8 @@ class StorageManager {
   // Get all settings
   async getSettings() {
     try {
-      const result = await chrome.storage.sync.get(['twitterBlockerSettings']);
-      return { ...this.defaultSettings, ...result.twitterBlockerSettings };
+      const result = await chrome.storage.sync.get(['xModeratorSettings']);
+      return { ...this.defaultSettings, ...result.xModeratorSettings };
     } catch (error) {
       console.error('Error getting settings:', error);
       return this.defaultSettings;
@@ -34,7 +34,8 @@ class StorageManager {
   // Save settings
   async saveSettings(settings) {
     try {
-      await chrome.storage.sync.set({ twitterBlockerSettings: settings });
+      await chrome.storage.sync.set({ xModeratorSettings: settings });
+      console.log('✅ xModerator: Settings saved successfully', settings);
       return true;
     } catch (error) {
       console.error('Error saving settings:', error);
@@ -98,8 +99,8 @@ class StorageManager {
   // Get stats
   async getStats() {
     try {
-      const result = await chrome.storage.local.get(['blockedStats']);
-      return result.blockedStats || {
+      const result = await chrome.storage.local.get(['xModeratorStats']);
+      return result.xModeratorStats || {
         totalBlocked: 0,
         blockedToday: 0,
         lastResetDate: new Date().toDateString(),
@@ -139,7 +140,8 @@ class StorageManager {
     }
     
     try {
-      await chrome.storage.local.set({ blockedStats: stats });
+      await chrome.storage.local.set({ xModeratorStats: stats });
+      console.log('📊 xModerator: Stats updated', stats);
       return stats;
     } catch (error) {
       console.error('Error updating stats:', error);
@@ -166,7 +168,7 @@ class StorageManager {
     };
     
     try {
-      await chrome.storage.local.set({ blockedStats: defaultStats });
+      await chrome.storage.local.set({ xModeratorStats: defaultStats });
       return true;
     } catch (error) {
       console.error('Error resetting stats:', error);

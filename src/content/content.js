@@ -20,7 +20,7 @@
       storageManager = new StorageManager();
       contentDetector = new ContentDetector();
 
-      // Load settings
+      // Load settings and stats
       settings = await storageManager.getSettings();
       stats = await storageManager.getStats();
       isEnabled = settings.enabled;
@@ -40,14 +40,15 @@
       chrome.storage.onChanged.addListener(handleStorageChanges);
 
     } catch (error) {
-      console.error('xModerator initialization failed:', error);
+      console.error('🚫 xModerator initialization failed:', error);
     }
   }
 
-  // Handle storage changes (settings updates)
+  // Handle storage changes from settings page
   function handleStorageChanges(changes, namespace) {
-    if (changes.twitterBlockerSettings) {
-      settings = { ...settings, ...changes.twitterBlockerSettings.newValue };
+    if (changes.xModeratorSettings) {
+      console.log('🔄 xModerator: Settings changed', changes.xModeratorSettings);
+      settings = { ...settings, ...changes.xModeratorSettings.newValue };
       isEnabled = settings.enabled;
       
       if (isEnabled) {
@@ -61,6 +62,8 @@
 
   // Start monitoring for tweets to filter
   function startContentMonitoring() {
+    console.log('🔍 xModerator: Starting content monitoring...');
+    
     // Initial scan
     scanExistingTweets();
 
@@ -75,7 +78,10 @@
               const tweets = node.matches('[data-testid="tweet"]') ? 
                 [node] : node.querySelectorAll('[data-testid="tweet"]');
               
-              tweets.forEach(tweet => processTweet(tweet));
+              tweets.forEach(tweet => {
+                console.log('🐦 xModerator: Found new tweet, processing...');
+                processTweet(tweet);
+              });
             }
           }
         });
@@ -89,48 +95,58 @@
     });
 
     // Store observer reference for cleanup
-    window.twitterBlockerObserver = observer;
+    window.xModeratorObserver = observer;
+    console.log('👁️ xModerator: Observer started and monitoring tweets');
   }
 
   // Stop content monitoring
   function stopContentMonitoring() {
-    if (window.twitterBlockerObserver) {
-      window.twitterBlockerObserver.disconnect();
-      window.twitterBlockerObserver = null;
+    if (window.xModeratorObserver) {
+      window.xModeratorObserver.disconnect();
+      window.xModeratorObserver = null;
+      console.log('⏹️ xModerator: Stopped monitoring');
     }
   }
 
   // Scan existing tweets on page
   function scanExistingTweets() {
+    console.log('🔍 xModerator: Scanning existing tweets...');
     const tweets = document.querySelectorAll('[data-testid="tweet"]');
+    console.log(`📊 xModerator: Found ${tweets.length} existing tweets to scan`);
     tweets.forEach(tweet => processTweet(tweet));
   }
 
   // Process individual tweet
   async function processTweet(tweetElement) {
-    if (!isEnabled || !tweetElement || tweetElement.dataset.processed === 'true') {
+    if (!tweetElement || tweetElement.hasAttribute('data-xmoderator-processed')) {
       return;
     }
 
     // Mark as processed to avoid duplicate processing
-    tweetElement.dataset.processed = 'true';
+    tweetElement.setAttribute('data-xmoderator-processed', 'true');
 
     try {
-      // Extract tweet content
+      // Extract tweet data
       const tweetData = extractTweetData(tweetElement);
-      
       if (!tweetData.text && !tweetData.username) {
-        return; // Skip if no content to analyze
+        return;
       }
 
-      // Check if user is blocked
-      if (contentDetector.isUserBlocked(tweetData.username, settings.blockedUsers)) {
-        await blockTweet(tweetElement, 'users', `Blocked user: @${tweetData.username}`);
+      console.log('🔍 xModerator: Processing tweet:', {
+        username: tweetData.username,
+        text: tweetData.text.substring(0, 100) + '...'
+      });
+
+      // Check blocked users first
+      if (settings.blockedUsers.includes(tweetData.username.toLowerCase())) {
+        console.log('🚫 xModerator: Blocking tweet from blocked user:', tweetData.username);
+        await blockTweet(tweetElement, 'user', `Blocked user: @${tweetData.username}`);
         return;
       }
 
       // Check custom keywords
       if (contentDetector.checkCustomKeywords(tweetData.text, settings.customKeywords)) {
+        console.log('🚫 xModerator: Blocking tweet for custom keyword');
         await blockTweet(tweetElement, 'keywords', 'Contains blocked keyword');
         return;
       }
@@ -158,52 +174,45 @@
         const reason = `${contentDetector.getCategoryDisplayName(primaryCategory)} content detected`;
         console.log('🚫 xModerator: Blocking tweet for', primaryCategory, ':', reason);
         await blockTweet(tweetElement, primaryCategory, reason);
-        return;
-      }
-
-      // Check for spam patterns
-      const spamAnalysis = contentDetector.analyzeStructure(tweetData.text);
-      if (spamAnalysis.isSpammy && settings.categories.spam) {
-        await blockTweet(tweetElement, 'spam', 'Spam-like content detected');
-        return;
+      } else {
+        console.log('✅ xModerator: Tweet passed all filters');
       }
 
     } catch (error) {
-      console.error('Error processing tweet:', error);
+      console.error('❌ xModerator: Error processing tweet:', error);
     }
   }
 
-  // Extract data from tweet element
+  // Extract tweet text and metadata
   function extractTweetData(tweetElement) {
     const data = {
       text: '',
       username: '',
-      element: tweetElement
+      isRetweet: false,
+      hasMedia: false
     };
 
     try {
-      // Extract tweet text
-      const tweetTextElement = tweetElement.querySelector('[data-testid="tweetText"]');
-      if (tweetTextElement) {
-        data.text = tweetTextElement.textContent || '';
+      // Get tweet text
+      const textElement = tweetElement.querySelector('[data-testid="tweetText"], [lang]');
+      if (textElement) {
+        data.text = textElement.textContent || textElement.innerText || '';
       }
 
-      // Extract username
-      const usernameElement = tweetElement.querySelector('[data-testid="User-Name"] a');
+      // Get username
+      const usernameElement = tweetElement.querySelector('[data-testid="User-Name"] a[href*="/"]');
       if (usernameElement) {
         const href = usernameElement.getAttribute('href');
         if (href) {
-          data.username = href.replace('/', '');
+          data.username = href.replace('/', '').split('/')[0];
         }
       }
 
-      // Also get text from quoted tweets, replies, etc.
-      const additionalText = tweetElement.querySelectorAll('[lang]');
-      additionalText.forEach(el => {
-        if (el.textContent && !data.text.includes(el.textContent)) {
-          data.text += ' ' + el.textContent;
-        }
-      });
+      // Check if retweet
+      data.isRetweet = tweetElement.querySelector('[data-testid="socialContext"]') !== null;
+
+      // Check if has media
+      data.hasMedia = tweetElement.querySelector('[data-testid="tweetPhoto"], [data-testid="videoPlayer"]') !== null;
 
     } catch (error) {
       console.error('Error extracting tweet data:', error);
@@ -212,163 +221,117 @@
     return data;
   }
 
-  // Block/hide a tweet
+  // Block/filter a tweet
   async function blockTweet(tweetElement, category, reason) {
     try {
-      // Update stats
+      console.log('🚫 xModerator: Blocking tweet:', { category, reason });
+      
+      // Update statistics
       await storageManager.updateStats(category);
-      stats = await storageManager.getStats();
-
-      // Apply blocking style
+      
+      // Apply visual filter
       if (settings.blurInsteadOfHide) {
-        tweetElement.classList.add('twitter-blocker-blurred');
-        
-        // Add reveal button
-        const revealBtn = createRevealButton(reason);
-        tweetElement.appendChild(revealBtn);
+        blurTweet(tweetElement, reason);
       } else {
-        tweetElement.classList.add('twitter-blocker-hidden');
-        
-        // Add blocked message
-        const blockedMsg = createBlockedMessage(reason);
-        tweetElement.appendChild(blockedMsg);
+        hideTweet(tweetElement, reason);
       }
 
-      // Update counter
-      updateBlockedCounter();
-
-      console.log(`Blocked tweet: ${reason}`, { category, stats: stats.blockedToday });
+      // Add block button
+      addBlockUserButton(tweetElement);
 
     } catch (error) {
       console.error('Error blocking tweet:', error);
     }
   }
 
-  // Create reveal button for blurred tweets
-  function createRevealButton(reason) {
-    const button = document.createElement('div');
-    button.className = 'twitter-blocker-reveal-btn';
-    button.innerHTML = `
-      <div class="reveal-content">
-        <span class="reveal-text">Content hidden: ${reason}</span>
-        <button class="reveal-button">Show anyway</button>
+  // Hide tweet with overlay
+  function hideTweet(tweetElement, reason) {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'xmoderator-blocked-overlay';
+    overlay.innerHTML = `
+      <div class="xmoderator-blocked-content">
+        <div class="xmoderator-blocked-icon">🛡️</div>
+        <div class="xmoderator-blocked-text">Content Filtered - ${reason}</div>
+        <button class="xmoderator-show-anyway" onclick="this.parentElement.parentElement.style.display='none'; this.parentElement.parentElement.nextSibling.style.display='block';">Show anyway</button>
       </div>
     `;
 
-    button.querySelector('.reveal-button').addEventListener('click', (e) => {
-      e.stopPropagation();
-      const tweetElement = button.closest('[data-testid="tweet"]');
-      tweetElement.classList.remove('twitter-blocker-blurred');
-      button.remove();
-    });
+    // Hide original tweet
+    tweetElement.style.display = 'none';
 
-    return button;
+    // Insert overlay before tweet
+    tweetElement.parentNode.insertBefore(overlay, tweetElement);
   }
 
-  // Create blocked message for hidden tweets
-  function createBlockedMessage(reason) {
-    const message = document.createElement('div');
-    message.className = 'twitter-blocker-blocked-msg';
-    message.innerHTML = `
-      <div class="blocked-content">
-        <span class="blocked-icon">🚫</span>
-        <span class="blocked-text">Tweet blocked: ${reason}</span>
-        <button class="show-button">Show</button>
+  // Blur tweet with overlay
+  function blurTweet(tweetElement, reason) {
+    tweetElement.style.filter = 'blur(5px)';
+    tweetElement.style.position = 'relative';
+
+    const overlay = document.createElement('div');
+    overlay.className = 'xmoderator-blur-overlay';
+    overlay.innerHTML = `
+      <div class="xmoderator-blur-content">
+        <div class="xmoderator-blur-text">🛡️ Content Filtered - ${reason}</div>
+        <button class="xmoderator-show-anyway" onclick="this.parentElement.parentElement.remove(); this.parentElement.parentElement.previousSibling.style.filter='none';">Show anyway</button>
       </div>
     `;
 
-    message.querySelector('.show-button').addEventListener('click', (e) => {
-      e.stopPropagation();
-      const tweetElement = message.closest('[data-testid="tweet"]');
-      tweetElement.classList.remove('twitter-blocker-hidden');
-      message.remove();
-    });
-
-    return message;
+    tweetElement.parentNode.insertBefore(overlay, tweetElement.nextSibling);
   }
 
-  // Add blocked content counter to page
-  function addBlockedCounter() {
-    if (!settings.showBlockedCount) return;
+  // Add block user button
+  function addBlockUserButton(tweetElement) {
+    const userData = extractTweetData(tweetElement);
+    if (!userData.username) return;
 
-    const counter = document.createElement('div');
-    counter.id = 'twitter-blocker-counter';
-    counter.className = 'twitter-blocker-counter';
-    counter.innerHTML = `
-      <div class="counter-content">
-        <span class="counter-icon">🛡️</span>
-        <span class="counter-text">Blocked today: <span id="counter-number">${stats.blockedToday || 0}</span></span>
-      </div>
-    `;
+    const blockButton = document.createElement('button');
+    blockButton.className = 'xmoderator-block-user';
+    blockButton.textContent = `Block @${userData.username}`;
+    blockButton.onclick = async () => {
+      await storageManager.addBlockedUser(userData.username);
+      console.log('🚫 xModerator: User blocked:', userData.username);
+      blockButton.textContent = 'Blocked ✓';
+      blockButton.disabled = true;
+    };
 
-    // Add to page (try different locations)
-    const targetLocations = [
-      'nav[aria-label="Primary"]',
-      '[data-testid="primaryColumn"]',
-      'main',
-      'body'
-    ];
-
-    for (const selector of targetLocations) {
-      const target = document.querySelector(selector);
-      if (target) {
-        target.appendChild(counter);
-        break;
-      }
+    // Add to tweet actions area
+    const actionsArea = tweetElement.querySelector('[role="group"], [data-testid="reply"]')?.parentElement;
+    if (actionsArea) {
+      actionsArea.appendChild(blockButton);
     }
   }
 
-  // Update blocked counter
-  function updateBlockedCounter() {
-    const counterNumber = document.getElementById('counter-number');
-    if (counterNumber) {
-      counterNumber.textContent = stats.blockedToday || 0;
-    }
-  }
-
-  // Show all hidden tweets (when extension is disabled)
+  // Show all tweets (when disabled)
   function showAllTweets() {
-    const hiddenTweets = document.querySelectorAll('.twitter-blocker-hidden, .twitter-blocker-blurred');
-    hiddenTweets.forEach(tweet => {
-      tweet.classList.remove('twitter-blocker-hidden', 'twitter-blocker-blurred');
-      
-      // Remove blocker messages
-      const blockerElements = tweet.querySelectorAll('.twitter-blocker-reveal-btn, .twitter-blocker-blocked-msg');
-      blockerElements.forEach(el => el.remove());
+    document.querySelectorAll('.xmoderator-blocked-overlay, .xmoderator-blur-overlay').forEach(el => el.remove());
+    document.querySelectorAll('[data-testid="tweet"]').forEach(tweet => {
+      tweet.style.display = '';
+      tweet.style.filter = '';
     });
-
-    // Remove counter
-    const counter = document.getElementById('twitter-blocker-counter');
-    if (counter) {
-      counter.remove();
-    }
   }
 
-  // Listen for messages from popup/background
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    switch (message.action) {
-      case 'getStats':
-        sendResponse(stats);
-        break;
-      case 'toggle':
-        isEnabled = message.enabled;
-        if (isEnabled) {
-          startContentMonitoring();
-          addBlockedCounter();
-        } else {
-          stopContentMonitoring();
-          showAllTweets();
-        }
-        sendResponse({ success: true });
-        break;
-      case 'rescan':
-        if (isEnabled) {
-          scanExistingTweets();
-        }
-        sendResponse({ success: true });
-        break;
-    }
-  });
+  // Add blocked counter to page
+  function addBlockedCounter() {
+    const counter = document.createElement('div');
+    counter.id = 'xmoderator-counter';
+    counter.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(29, 155, 240, 0.9);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 9999;
+      backdrop-filter: blur(10px);
+    `;
+    counter.textContent = `🛡️ ${stats.blockedToday || 0} filtered today`;
+    document.body.appendChild(counter);
+  }
 
   // Show extension status notification
   function showExtensionStatus() {
@@ -399,6 +362,28 @@
     }, 3000);
   }
 
+  // Listen for messages from popup/options
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    switch (message.action) {
+      case 'toggle':
+        isEnabled = message.enabled;
+        if (isEnabled) {
+          startContentMonitoring();
+        } else {
+          stopContentMonitoring();
+          showAllTweets();
+        }
+        sendResponse({ success: true });
+        break;
+      case 'rescan':
+        if (isEnabled) {
+          scanExistingTweets();
+        }
+        sendResponse({ success: true });
+        break;
+    }
+  });
+
   // Initialize when page loads
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
@@ -407,11 +392,13 @@
   }
 
   // Re-initialize when navigating (SPA behavior)
-  let currentUrl = location.href;
+  let lastUrl = location.href;
   new MutationObserver(() => {
-    if (location.href !== currentUrl) {
-      currentUrl = location.href;
-      setTimeout(init, 1000); // Delay to let new content load
+    const url = location.href;
+    if (url !== lastUrl) {
+      lastUrl = url;
+      console.log('🔄 xModerator: Page navigation detected, reinitializing...');
+      setTimeout(init, 1000);
     }
   }).observe(document, { subtree: true, childList: true });
 
