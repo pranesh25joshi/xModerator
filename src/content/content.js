@@ -75,14 +75,27 @@
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType === Node.ELEMENT_NODE) {
-            // Check if it's a tweet or contains tweets
-            if (node.matches && (node.matches('[data-testid="tweet"]') || 
-                node.querySelector('[data-testid="tweet"]'))) {
-              const tweets = node.matches('[data-testid="tweet"]') ? 
-                [node] : node.querySelectorAll('[data-testid="tweet"]');
-              
-              tweets.forEach(tweet => {
-                console.log('🐦 xModerator: Found new tweet, processing...');
+            // Check multiple possible tweet selectors
+            const tweetSelectors = [
+              '[data-testid="tweet"]',
+              'article[data-testid="tweet"]', 
+              'article',
+              '[role="article"]'
+            ];
+            
+            let foundTweets = [];
+            
+            tweetSelectors.forEach(selector => {
+              if (node.matches && node.matches(selector)) {
+                foundTweets.push(node);
+              }
+              const childTweets = node.querySelectorAll ? node.querySelectorAll(selector) : [];
+              foundTweets.push(...childTweets);
+            });
+            
+            if (foundTweets.length > 0) {
+              console.log(`🐦 xModerator: Found ${foundTweets.length} new tweets, processing...`);
+              foundTweets.forEach(tweet => {
                 processTweet(tweet);
               });
             }
@@ -114,9 +127,57 @@
   // Scan existing tweets on page
   function scanExistingTweets() {
     console.log('🔍 xModerator: Scanning existing tweets...');
-    const tweets = document.querySelectorAll('[data-testid="tweet"]');
-    console.log(`📊 xModerator: Found ${tweets.length} existing tweets to scan`);
-    tweets.forEach(tweet => processTweet(tweet));
+    
+    // Try multiple selectors that X.com might use
+    const possibleSelectors = [
+      '[data-testid="tweet"]',
+      '[data-testid="cellInnerDiv"]', 
+      'article[data-testid="tweet"]',
+      'article',
+      '[role="article"]',
+      '.css-1dbjc4n[data-testid="tweet"]'
+    ];
+    
+    let foundTweets = [];
+    
+    possibleSelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      console.log(`🔍 xModerator: Selector "${selector}" found ${elements.length} elements`);
+      
+      if (elements.length > 0) {
+        foundTweets = [...elements];
+        console.log('✅ xModerator: Using selector:', selector);
+      }
+    });
+    
+    // Also log what's actually in the DOM
+    console.log('🔍 xModerator: Current page structure:');
+    console.log('- Articles:', document.querySelectorAll('article').length);
+    console.log('- Data-testid elements:', document.querySelectorAll('[data-testid]').length);
+    console.log('- Role=article:', document.querySelectorAll('[role="article"]').length);
+    
+    if (foundTweets.length === 0) {
+      console.log('❌ xModerator: No tweets found with any selector!');
+      console.log('� xModerator: Trying to find any content elements...');
+      
+      // Log first few elements that might be tweets
+      const allArticles = document.querySelectorAll('article, [role="article"], div[data-testid]');
+      console.log(`🔍 Found ${allArticles.length} potential tweet elements`);
+      allArticles.forEach((el, i) => {
+        if (i < 5) { // Log first 5
+          console.log(`Element ${i}:`, {
+            tag: el.tagName,
+            testid: el.getAttribute('data-testid'),
+            role: el.getAttribute('role'),
+            classes: el.className,
+            text: el.textContent?.substring(0, 100)
+          });
+        }
+      });
+    } else {
+      console.log(`📊 xModerator: Found ${foundTweets.length} tweets to scan`);
+      foundTweets.forEach(tweet => processTweet(tweet));
+    }
   }
 
   // Process individual tweet
@@ -196,18 +257,51 @@
     };
 
     try {
-      // Get tweet text
-      const textElement = tweetElement.querySelector('[data-testid="tweetText"], [lang]');
-      if (textElement) {
-        data.text = textElement.textContent || textElement.innerText || '';
+      // Try multiple selectors for tweet text (X.com keeps changing these)
+      const textSelectors = [
+        '[data-testid="tweetText"]',
+        '[lang]',
+        '.css-901oao',
+        'span[data-testid="tweetText"]',
+        'div[lang]',
+        '.r-37j5jr', // Common X.com text class
+        'span[dir="auto"]'
+      ];
+      
+      let textElement = null;
+      for (const selector of textSelectors) {
+        textElement = tweetElement.querySelector(selector);
+        if (textElement && textElement.textContent?.trim()) {
+          data.text = textElement.textContent || textElement.innerText || '';
+          console.log(`✅ Found text using selector: ${selector}`);
+          break;
+        }
+      }
+      
+      // If no specific selector worked, try to get any text content
+      if (!data.text && tweetElement.textContent) {
+        data.text = tweetElement.textContent;
+        console.log('✅ Using fallback text extraction');
       }
 
-      // Get username
-      const usernameElement = tweetElement.querySelector('[data-testid="User-Name"] a[href*="/"]');
-      if (usernameElement) {
-        const href = usernameElement.getAttribute('href');
-        if (href) {
-          data.username = href.replace('/', '').split('/')[0];
+      // Try multiple selectors for username
+      const usernameSelectors = [
+        '[data-testid="User-Name"] a[href*="/"]',
+        'a[href^="/"][role="link"]',
+        'span:contains("@")',
+        '.css-901oao[dir="ltr"]'
+      ];
+      
+      let usernameElement = null;
+      for (const selector of usernameSelectors) {
+        usernameElement = tweetElement.querySelector(selector);
+        if (usernameElement) {
+          const href = usernameElement.getAttribute('href');
+          if (href && href.startsWith('/') && href.length > 1) {
+            data.username = href.replace('/', '').split('/')[0];
+            console.log(`✅ Found username using selector: ${selector} -> ${data.username}`);
+            break;
+          }
         }
       }
 
@@ -215,10 +309,17 @@
       data.isRetweet = tweetElement.querySelector('[data-testid="socialContext"]') !== null;
 
       // Check if has media
-      data.hasMedia = tweetElement.querySelector('[data-testid="tweetPhoto"], [data-testid="videoPlayer"]') !== null;
+      data.hasMedia = tweetElement.querySelector('[data-testid="tweetPhoto"], [data-testid="videoPlayer"], img, video') !== null;
+
+      console.log('📝 Extracted tweet data:', {
+        textLength: data.text.length,
+        username: data.username,
+        isRetweet: data.isRetweet,
+        hasMedia: data.hasMedia
+      });
 
     } catch (error) {
-      console.error('Error extracting tweet data:', error);
+      console.error('❌ Error extracting tweet data:', error);
     }
 
     return data;
