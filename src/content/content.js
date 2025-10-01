@@ -20,6 +20,9 @@
       storageManager = new StorageManager();
       contentDetector = new ContentDetector();
 
+      // Load keyword preferences first
+      await contentDetector.loadKeywordPreferences();
+
       // Load settings and stats
       settings = await storageManager.getSettings();
       stats = await storageManager.getStats();
@@ -584,6 +587,16 @@
         if (isEnabled) {
           scanExistingTweets();
         }
+        sendResponse({ success: true });
+        break;
+      case 'reloadKeywordPreferences':
+        // Reload keyword preferences when user changes them in options
+        contentDetector.loadKeywordPreferences().then(() => {
+          console.log('🔄 xModerator: Keyword preferences reloaded');
+          if (isEnabled) {
+            scanExistingTweets(); // Re-scan with new preferences
+          }
+        });
         sendResponse({ success: true });
         break;
     }

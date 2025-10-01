@@ -24,6 +24,7 @@
             <button class="nav-btn active" data-tab="general">General</button>
             <button class="nav-btn" data-tab="categories">Categories</button>
             <button class="nav-btn" data-tab="keywords">Keywords</button>
+            <button class="nav-btn" data-tab="customize-keywords">Customize Words</button>
             <button class="nav-btn" data-tab="users">Blocked Users</button>
             <button class="nav-btn" data-tab="stats">Statistics</button>
             <button class="nav-btn" data-tab="import-export">Data</button>
@@ -225,6 +226,24 @@
 
                     <div class="keywords-list" id="keywords-list">
                         <!-- Keywords will be dynamically added here -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- Customize Keywords Tab -->
+            <div class="tab-content" id="customize-keywords-tab">
+                <section class="settings-section">
+                    <h2>Customize Detection Words</h2>
+                    <p class="section-description">Enable or disable specific words from each category. Disabled words won't be used for content detection.</p>
+                    
+                    <div class="customize-actions">
+                        <button id="enable-all-keywords-btn" class="secondary-btn">Enable All</button>
+                        <button id="disable-all-keywords-btn" class="secondary-btn">Disable All</button>
+                        <button id="reset-keywords-btn" class="secondary-btn">Reset to Defaults</button>
+                    </div>
+
+                    <div class="keyword-categories" id="keyword-categories">
+                        <!-- Keyword categories will be dynamically populated here -->
                     </div>
                 </section>
             </div>

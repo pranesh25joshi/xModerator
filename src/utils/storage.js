@@ -175,6 +175,53 @@ class StorageManager {
       return false;
     }
   }
+
+  // Get keyword preferences
+  async getKeywordPreferences() {
+    try {
+      const result = await chrome.storage.local.get(['keywordPreferences']);
+      return result.keywordPreferences || {};
+    } catch (error) {
+      console.error('Error getting keyword preferences:', error);
+      return {};
+    }
+  }
+
+  // Save keyword preferences
+  async saveKeywordPreferences(preferences) {
+    try {
+      await chrome.storage.local.set({ keywordPreferences: preferences });
+      console.log('✅ xModerator: Keyword preferences saved', preferences);
+      return true;
+    } catch (error) {
+      console.error('Error saving keyword preferences:', error);
+      return false;
+    }
+  }
+
+  // Update keyword preference for a specific category and keyword
+  async updateKeywordPreference(category, keyword, enabled) {
+    const preferences = await this.getKeywordPreferences();
+    
+    if (!preferences[category]) {
+      preferences[category] = {};
+    }
+    
+    preferences[category][keyword] = enabled;
+    return await this.saveKeywordPreferences(preferences);
+  }
+
+  // Reset keyword preferences to defaults (all enabled)
+  async resetKeywordPreferences() {
+    try {
+      await chrome.storage.local.remove(['keywordPreferences']);
+      console.log('✅ xModerator: Keyword preferences reset to defaults');
+      return true;
+    } catch (error) {
+      console.error('Error resetting keyword preferences:', error);
+      return false;
+    }
+  }
 }
 
 // Export for use in other scripts

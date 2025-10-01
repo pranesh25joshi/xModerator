@@ -131,6 +131,19 @@ class OptionsManager {
       this.importData(e.target.files[0]);
     });
 
+    // Keyword customization
+    document.getElementById('enable-all-keywords-btn').addEventListener('click', () => {
+      this.enableAllKeywords();
+    });
+
+    document.getElementById('disable-all-keywords-btn').addEventListener('click', () => {
+      this.disableAllKeywords();
+    });
+
+    document.getElementById('reset-keywords-btn').addEventListener('click', () => {
+      this.resetKeywordPreferences();
+    });
+
     // Save button
     document.getElementById('save-settings-btn').addEventListener('click', () => {
       this.saveSettings();
@@ -186,6 +199,7 @@ class OptionsManager {
     this.updateKeywordsList();
     this.updateUsersList();
     this.updateStatsUI();
+    this.initializeKeywordCustomization();
   }
 
   updateSetting(key, value) {
@@ -467,6 +481,234 @@ class OptionsManager {
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#039;");
+  }
+
+  // Keyword customization methods
+  async initializeKeywordCustomization() {
+    try {
+      // Load keyword preferences
+      const storageManager = new StorageManager();
+      const preferences = await storageManager.getKeywordPreferences();
+      
+      // Get default keywords (we need to create a ContentDetector instance for this)
+      const defaultKeywords = {
+        politics: [
+          'trump', 'biden', 'election', 'vote', 'voting', 'democrat', 'republican',
+          'congress', 'senate', 'politician', 'political', 'campaign', 'poll',
+          'liberal', 'conservative', 'left wing', 'right wing', 'maga', 'gop',
+          'politics', 'government', 'minister', 'parliament', 'bjp', 'leftist',
+          'rightwing', 'socialist', 'communist', 'capitalist', 'policy', 'law',
+          'bill', 'legislation', 'party', 'manifesto', 'cabinet', 'assembly',
+          'governor', 'mayor', 'mp', 'mla', 'lok sabha', 'rajya sabha'
+        ],
+        violence: [
+          'kill', 'murder', 'death', 'dead', 'violence', 'violent', 'attack',
+          'shooting', 'gun', 'weapon', 'bomb', 'explosion', 'terror', 'war',
+          'fight', 'fighting', 'blood', 'bloody', 'assault', 'abuse', 'terrorist',
+          'riot', 'crime', 'stab', 'rape', 'injury', 'torture', 'hostage',
+          'execute', 'lynch', 'massacre', 'genocide', 'homicide', 'suicide',
+          'selfharm', 'harm', 'hurt', 'aggression', 'brutal', 'cruel', 'trauma',
+          'victim', 'perpetrator'
+        ],
+        adult: [
+          'porn', 'sex', 'nude', 'naked', 'adult', 'nsfw', 'xxx', 'sexy',
+          'onlyfans', 'escort', 'hookup', 'dating', 'hot singles', 'erotic',
+          'explicit', 'fetish', 'camgirl', 'boobs', 'strip', 'orgasm', 'cum',
+          'dildo', 'anal', 'blowjob', 'threesome', 'incest', 'milf', 'bdsm',
+          'kink', 'hardcore', 'masturbate', 'suck', 'pussy', 'cock', 'penis',
+          'vagina', 'clit', 'tits', 'ass', 'butt', 'spank', 'dominatrix',
+          'submissive', 'dominant', 'sexwork', 'sexworker', 'hooker', 'prostitute',
+          'lewd', 'r18', 'r-18', 'r 18'
+        ],
+        spam: [
+          'click here', 'free money', 'make money', 'work from home', 'get rich',
+          'buy now', 'limited time', 'act now', 'guarantee', 'risk free',
+          'no obligation', 'call now', 'urgent', 'congratulations'
+        ],
+        negativity: [
+          'hate', 'angry', 'furious', 'disgusting', 'terrible', 'awful',
+          'worst', 'horrible', 'stupid', 'idiot', 'moron', 'pathetic',
+          'losers', 'fail', 'failing', 'disappointed', 'frustrated'
+        ],
+        promotions: [
+          'sponsored', 'ad', 'advertisement', 'promote', 'sale', 'discount',
+          'offer', 'deal', 'coupon', 'promo', 'affiliate', 'partnership'
+        ]
+      };
+
+      this.renderKeywordCustomization(defaultKeywords, preferences);
+    } catch (error) {
+      console.error('Error initializing keyword customization:', error);
+    }
+  }
+
+  renderKeywordCustomization(defaultKeywords, preferences) {
+    const container = document.getElementById('keyword-categories');
+    const categoryDisplayNames = {
+      politics: { name: 'Politics', icon: '🏛️' },
+      violence: { name: 'Violence', icon: '⚠️' },
+      adult: { name: 'Adult Content', icon: '🔞' },
+      spam: { name: 'Spam', icon: '🚫' },
+      negativity: { name: 'Negativity', icon: '😞' },
+      promotions: { name: 'Promotions', icon: '💰' }
+    };
+
+    container.innerHTML = Object.entries(defaultKeywords).map(([category, keywords]) => {
+      const categoryPrefs = preferences[category] || {};
+      const categoryInfo = categoryDisplayNames[category];
+      const enabledCount = keywords.filter(keyword => categoryPrefs[keyword] !== false).length;
+      
+      return `
+        <div class="keyword-category-section">
+          <div class="category-header-custom">
+            <span class="category-icon">${categoryInfo.icon}</span>
+            <h3>${categoryInfo.name}</h3>
+            <span class="keyword-count">${enabledCount}/${keywords.length} enabled</span>
+            <div class="category-actions">
+              <button class="enable-category-btn" data-category="${category}">Enable All</button>
+              <button class="disable-category-btn" data-category="${category}">Disable All</button>
+            </div>
+          </div>
+          <div class="keywords-grid">
+            ${keywords.map(keyword => {
+              const isEnabled = categoryPrefs[keyword] !== false;
+              return `
+                <label class="keyword-checkbox-item">
+                  <input type="checkbox" 
+                         class="keyword-checkbox" 
+                         data-category="${category}" 
+                         data-keyword="${keyword}" 
+                         ${isEnabled ? 'checked' : ''}>
+                  <span class="keyword-label">${this.escapeHtml(keyword)}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Add event listeners for checkboxes
+    container.querySelectorAll('.keyword-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        this.updateKeywordPreference(
+          e.target.dataset.category,
+          e.target.dataset.keyword,
+          e.target.checked
+        );
+      });
+    });
+
+    // Add event listeners for category buttons
+    container.querySelectorAll('.enable-category-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        this.enableCategoryKeywords(e.target.dataset.category);
+      });
+    });
+
+    container.querySelectorAll('.disable-category-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        this.disableCategoryKeywords(e.target.dataset.category);
+      });
+    });
+  }
+
+  async updateKeywordPreference(category, keyword, enabled) {
+    try {
+      const storageManager = new StorageManager();
+      await storageManager.updateKeywordPreference(category, keyword, enabled);
+      
+      // Update the count display
+      this.updateCategoryCount(category);
+      this.markUnsaved();
+      
+      // Notify content script to reload preferences
+      chrome.tabs.query({}, (tabs) => {
+        tabs.forEach(tab => {
+          if (tab.url && tab.url.includes('twitter.com')) {
+            chrome.tabs.sendMessage(tab.id, { action: 'reloadKeywordPreferences' });
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error updating keyword preference:', error);
+    }
+  }
+
+  updateCategoryCount(category) {
+    const categorySection = document.querySelector(`[data-category="${category}"]`).closest('.keyword-category-section');
+    const checkboxes = categorySection.querySelectorAll('.keyword-checkbox');
+    const enabledCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+    const totalCount = checkboxes.length;
+    
+    const countElement = categorySection.querySelector('.keyword-count');
+    countElement.textContent = `${enabledCount}/${totalCount} enabled`;
+  }
+
+  async enableCategoryKeywords(category) {
+    const categorySection = document.querySelector(`[data-category="${category}"]`).closest('.keyword-category-section');
+    const checkboxes = categorySection.querySelectorAll('.keyword-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = true;
+      this.updateKeywordPreference(category, checkbox.dataset.keyword, true);
+    });
+  }
+
+  async disableCategoryKeywords(category) {
+    const categorySection = document.querySelector(`[data-category="${category}"]`).closest('.keyword-category-section');
+    const checkboxes = categorySection.querySelectorAll('.keyword-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+      this.updateKeywordPreference(category, checkbox.dataset.keyword, false);
+    });
+  }
+
+  async enableAllKeywords() {
+    const checkboxes = document.querySelectorAll('.keyword-checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = true;
+      this.updateKeywordPreference(checkbox.dataset.category, checkbox.dataset.keyword, true);
+    });
+    this.showToast('All keywords enabled', 'success');
+  }
+
+  async disableAllKeywords() {
+    const checkboxes = document.querySelectorAll('.keyword-checkbox');
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+      this.updateKeywordPreference(checkbox.dataset.category, checkbox.dataset.keyword, false);
+    });
+    this.showToast('All keywords disabled', 'success');
+  }
+
+  async resetKeywordPreferences() {
+    if (!confirm('Reset all keyword preferences to defaults? This will enable all keywords.')) {
+      return;
+    }
+
+    try {
+      const storageManager = new StorageManager();
+      await storageManager.resetKeywordPreferences();
+      
+      // Re-render the UI
+      await this.initializeKeywordCustomization();
+      this.markUnsaved();
+      this.showToast('Keyword preferences reset to defaults', 'success');
+      
+      // Notify content script to reload preferences
+      chrome.tabs.query({}, (tabs) => {
+        tabs.forEach(tab => {
+          if (tab.url && tab.url.includes('twitter.com')) {
+            chrome.tabs.sendMessage(tab.id, { action: 'reloadKeywordPreferences' });
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error resetting keyword preferences:', error);
+      this.showToast('Failed to reset keyword preferences', 'error');
+    }
   }
 
   async sendMessage(message) {

@@ -2,21 +2,35 @@
 
 class ContentDetector {
   constructor() {
-    // Keyword lists for different categories
-    this.keywords = {
+    // Default keyword lists for different categories
+    this.defaultKeywords = {
       politics: [
         'trump', 'biden', 'election', 'vote', 'voting', 'democrat', 'republican',
         'congress', 'senate', 'politician', 'political', 'campaign', 'poll',
-        'liberal', 'conservative', 'left wing', 'right wing', 'maga', 'gop'
+        'liberal', 'conservative', 'left wing', 'right wing', 'maga', 'gop',
+        'politics', 'government', 'minister', 'parliament', 'bjp', 'leftist',
+        'rightwing', 'socialist', 'communist', 'capitalist', 'policy', 'law',
+        'bill', 'legislation', 'party', 'manifesto', 'cabinet', 'assembly',
+        'governor', 'mayor', 'mp', 'mla', 'lok sabha', 'rajya sabha'
       ],
       violence: [
         'kill', 'murder', 'death', 'dead', 'violence', 'violent', 'attack',
         'shooting', 'gun', 'weapon', 'bomb', 'explosion', 'terror', 'war',
-        'fight', 'fighting', 'blood', 'bloody', 'assault', 'abuse'
+        'fight', 'fighting', 'blood', 'bloody', 'assault', 'abuse', 'terrorist',
+        'riot', 'crime', 'stab', 'rape', 'injury', 'torture', 'hostage',
+        'execute', 'lynch', 'massacre', 'genocide', 'homicide', 'suicide',
+        'selfharm', 'harm', 'hurt', 'aggression', 'brutal', 'cruel', 'trauma',
+        'victim', 'perpetrator'
       ],
       adult: [
         'porn', 'sex', 'nude', 'naked', 'adult', 'nsfw', 'xxx', 'sexy',
-        'onlyfans', 'escort', 'hookup', 'dating', 'hot singles'
+        'onlyfans', 'escort', 'hookup', 'dating', 'hot singles', 'erotic',
+        'explicit', 'fetish', 'camgirl', 'boobs', 'strip', 'orgasm', 'cum',
+        'dildo', 'anal', 'blowjob', 'threesome', 'incest', 'milf', 'bdsm',
+        'kink', 'hardcore', 'masturbate', 'suck', 'pussy', 'cock', 'penis',
+        'vagina', 'clit', 'tits', 'ass', 'butt', 'spank', 'dominatrix',
+        'submissive', 'dominant', 'sexwork', 'sexworker', 'hooker', 'prostitute',
+        'lewd', 'r18', 'r-18', 'r 18'
       ],
       spam: [
         'click here', 'free money', 'make money', 'work from home', 'get rich',
@@ -34,6 +48,9 @@ class ContentDetector {
       ]
     };
 
+    // Active keywords (will be loaded from user preferences)
+    this.keywords = { ...this.defaultKeywords };
+
     // Regex patterns for more sophisticated detection
     this.patterns = {
       urls: /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g,
@@ -42,6 +59,39 @@ class ContentDetector {
       email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
       phone: /(\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})/g
     };
+  }
+
+  // Load user's keyword preferences and update active keywords
+  async loadKeywordPreferences() {
+    try {
+      const result = await chrome.storage.local.get(['keywordPreferences']);
+      const preferences = result.keywordPreferences || {};
+      
+      // Update active keywords based on user preferences
+      for (const [category, defaultWords] of Object.entries(this.defaultKeywords)) {
+        const userPrefs = preferences[category] || {};
+        // Only include keywords that are not explicitly disabled
+        this.keywords[category] = defaultWords.filter(keyword => 
+          userPrefs[keyword] !== false // Include if not explicitly set to false
+        );
+      }
+      
+      console.log('Loaded keyword preferences:', preferences);
+    } catch (error) {
+      console.error('Error loading keyword preferences:', error);
+      // Fallback to default keywords
+      this.keywords = { ...this.defaultKeywords };
+    }
+  }
+
+  // Get all default keywords for UI purposes
+  getDefaultKeywords() {
+    return this.defaultKeywords;
+  }
+
+  // Get current active keywords
+  getActiveKeywords() {
+    return this.keywords;
   }
 
   // Main content analysis function
