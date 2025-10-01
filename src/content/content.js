@@ -33,9 +33,6 @@
       // Show a brief notification that extension is active
       showExtensionStatus();
 
-      // Add test button for verification
-      addTestButton();
-
       // TEST: Verify content detection is working
       console.log('🧪 xModerator: Testing content detection...');
       if (contentDetector && typeof contentDetector.analyzeContent === 'function') {
@@ -146,39 +143,43 @@
     const style = document.createElement('style');
     style.id = 'xmoderator-styles';
     style.textContent = `
-      /* Hide overlay styles */
+      /* Hide overlay styles - No longer used for hide mode */
       .xmoderator-blocked-overlay {
-        background: linear-gradient(45deg, #ff6b35, #ff8c42);
-        border: 2px solid #ff6b35;
-        border-radius: 12px;
-        padding: 20px;
-        margin: 10px 0;
-        text-align: center;
-        position: relative;
-        z-index: 1000;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        display: none; /* Hidden since we don't show overlays for hide mode */
       }
       
-      .xmoderator-blocked-content {
-        color: white;
+      /* Blur overlay styles - Dark theme for Twitter */
+      .xmoderator-blur-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(21, 32, 43, 0.95); /* Dark Twitter background */
+        border: 1px solid rgba(113, 118, 123, 0.3); /* Gray border */
+        border-radius: 12px;
+        padding: 16px 24px;
+        z-index: 1001;
+        backdrop-filter: blur(2px);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      }
+      
+      .xmoderator-blur-content {
+        text-align: center;
+        color: #e7e9ea; /* Twitter light text color */
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       }
       
-      .xmoderator-blocked-icon {
-        font-size: 24px;
-        margin-bottom: 8px;
-      }
-      
-      .xmoderator-blocked-text {
-        font-size: 16px;
+      .xmoderator-blur-text {
+        font-size: 14px;
         font-weight: bold;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
+        color: #71767b; /* Twitter gray text */
       }
       
       .xmoderator-show-anyway {
-        background: rgba(255,255,255,0.2);
-        border: 1px solid rgba(255,255,255,0.3);
-        color: white;
+        background: rgba(113, 118, 123, 0.2); /* Dark gray background */
+        border: 1px solid rgba(113, 118, 123, 0.4);
+        color: #e7e9ea; /* Light text */
         padding: 8px 16px;
         border-radius: 6px;
         cursor: pointer;
@@ -187,50 +188,33 @@
       }
       
       .xmoderator-show-anyway:hover {
-        background: rgba(255,255,255,0.3);
+        background: rgba(113, 118, 123, 0.3);
+        border-color: rgba(113, 118, 123, 0.6);
         transform: translateY(-1px);
       }
       
-      /* Blur overlay styles */
-      .xmoderator-blur-overlay {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(255, 107, 53, 0.95);
-        border-radius: 12px;
-        padding: 16px 24px;
-        z-index: 1001;
-        backdrop-filter: blur(2px);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      }
-      
-      .xmoderator-blur-content {
-        text-align: center;
-        color: white;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      }
-      
-      .xmoderator-blur-text {
-        font-size: 14px;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-      
-      /* Block user button */
+      /* Block user button - Dark theme */
       .xmoderator-block-user {
-        background: #dc3545;
-        color: white;
-        border: none;
+        background: rgba(113, 118, 123, 0.8); /* Dark gray background */
+        color: #e7e9ea; /* Light text */
+        border: 1px solid rgba(113, 118, 123, 0.4);
         padding: 4px 8px;
         border-radius: 4px;
         font-size: 12px;
         cursor: pointer;
         margin: 5px;
+        transition: all 0.2s;
       }
       
       .xmoderator-block-user:hover {
-        background: #c82333;
+        background: rgba(113, 118, 123, 1);
+        border-color: rgba(113, 118, 123, 0.6);
+      }
+      
+      .xmoderator-block-user:disabled {
+        background: rgba(29, 155, 240, 0.8); /* Twitter blue when blocked */
+        border-color: rgba(29, 155, 240, 0.4);
+        cursor: not-allowed;
       }
     `;
     
@@ -469,31 +453,11 @@
     }
   }
 
-  // Hide tweet with overlay
+  // Hide tweet completely (no overlay)
   function hideTweet(tweetElement, reason) {
-    // Create overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'xmoderator-blocked-overlay';
-    overlay.innerHTML = `
-      <div class="xmoderator-blocked-content">
-        <div class="xmoderator-blocked-icon">🛡️</div>
-        <div class="xmoderator-blocked-text">Content Filtered - ${reason}</div>
-        <button class="xmoderator-show-anyway">Show anyway</button>
-      </div>
-    `;
-
-    // Add event listener for show button
-    const showButton = overlay.querySelector('.xmoderator-show-anyway');
-    showButton.addEventListener('click', () => {
-      overlay.style.display = 'none';
-      tweetElement.style.display = 'block';
-    });
-
-    // Hide original tweet
+    // Simply hide the tweet completely without any overlay
     tweetElement.style.display = 'none';
-
-    // Insert overlay before tweet
-    tweetElement.parentNode.insertBefore(overlay, tweetElement);
+    console.log('🚫 xModerator: Tweet hidden completely -', reason);
   }
 
   // Blur tweet with overlay
@@ -601,97 +565,6 @@
       notification.style.opacity = '0';
       setTimeout(() => notification.remove(), 300);
     }, 3000);
-  }
-
-  // Add test button to verify filtering works
-  function addTestButton() {
-    const testButton = document.createElement('button');
-    testButton.style.cssText = `
-      position: fixed;
-      bottom: 80px;
-      right: 20px;
-      background: #ff6b35;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-      z-index: 9999;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    `;
-    testButton.innerHTML = '🧪 Test Filter';
-    testButton.onclick = createTestTweet;
-    document.body.appendChild(testButton);
-  }
-
-  // Create a fake tweet for testing
-  function createTestTweet() {
-    console.log('🧪 xModerator: Creating test tweet...');
-    
-    // Test the exact content from your HTML example
-    const testContent = [
-      'wished i was an adult.',
-      'This is a test tweet about politics and elections',
-      'Violence test: This tweet talks about weapons and fighting',
-      'Spam test: Click here for free money guaranteed!'
-    ];
-
-    const randomContent = testContent[Math.floor(Math.random() * testContent.length)];
-    
-    console.log('🧪 xModerator: Testing with content:', randomContent);
-    
-    // Run content detection test
-    if (contentDetector) {
-      const analysis = contentDetector.analyzeContent(randomContent, 'testuser', settings.sensitivity);
-      console.log('🧪 xModerator: Content analysis result:', analysis);
-      
-      if (analysis.shouldBlock) {
-        console.log('✅ xModerator: Filter is working! Content would be blocked:', analysis.categories);
-      } else {
-        console.log('❌ xModerator: Filter did not catch this content');
-      }
-    }
-    
-    // Create fake tweet element
-    const fakeTweet = document.createElement('div');
-    fakeTweet.setAttribute('data-testid', 'tweet');
-    fakeTweet.style.cssText = `
-      position: fixed;
-      top: 100px;
-      right: 20px;
-      width: 300px;
-      background: white;
-      border: 1px solid #e1e8ed;
-      border-radius: 12px;
-      padding: 15px;
-      z-index: 9998;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    `;
-    
-    fakeTweet.innerHTML = `
-      <div data-testid="User-Name">
-        <a href="/testuser">@testuser</a>
-      </div>
-      <div data-testid="tweetText">${randomContent}</div>
-    `;
-    
-    document.body.appendChild(fakeTweet);
-    
-    console.log('🧪 xModerator: Created test tweet with content:', randomContent);
-    
-    // Process the fake tweet
-    setTimeout(() => {
-      processTweet(fakeTweet);
-    }, 100);
-    
-    // Remove test tweet after 10 seconds if not filtered
-    setTimeout(() => {
-      if (document.body.contains(fakeTweet)) {
-        fakeTweet.remove();
-      }
-    }, 10000);
   }
 
   // Listen for messages from popup/options
