@@ -259,9 +259,17 @@ class OptionsManager {
     container.innerHTML = this.settings.customKeywords.map(keyword => `
       <div class="keyword-item">
         <span class="keyword-text">${this.escapeHtml(keyword)}</span>
-        <button class="remove-btn" onclick="optionsManager.removeKeyword('${keyword}')">Remove</button>
+        <button class="remove-btn" data-keyword="${this.escapeHtml(keyword)}">Remove</button>
       </div>
     `).join('');
+
+    // Add event listeners for remove buttons
+    container.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const keyword = e.target.dataset.keyword;
+        this.removeKeyword(keyword);
+      });
+    });
   }
 
   addBlockedUser() {
@@ -308,9 +316,17 @@ class OptionsManager {
     container.innerHTML = this.settings.blockedUsers.map(username => `
       <div class="user-item">
         <span class="user-text">@${this.escapeHtml(username)}</span>
-        <button class="remove-btn" onclick="optionsManager.removeBlockedUser('${username}')">Unblock</button>
+        <button class="remove-btn" data-username="${this.escapeHtml(username)}">Unblock</button>
       </div>
     `).join('');
+
+    // Add event listeners for remove buttons
+    container.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const username = e.target.dataset.username;
+        this.removeBlockedUser(username);
+      });
+    });
   }
 
   updateStatsUI() {
@@ -728,4 +744,6 @@ class OptionsManager {
 let optionsManager;
 document.addEventListener('DOMContentLoaded', () => {
   optionsManager = new OptionsManager();
+  // Make it globally accessible for any remaining onclick handlers
+  window.optionsManager = optionsManager;
 });
