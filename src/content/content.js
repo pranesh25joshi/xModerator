@@ -14,6 +14,8 @@
   // Initialize the extension
   async function init() {
     try {
+      console.log('🛡️ xModerator: Starting up on', window.location.hostname);
+      
       // Create utility instances
       storageManager = new StorageManager();
       contentDetector = new ContentDetector();
@@ -23,7 +25,10 @@
       stats = await storageManager.getStats();
       isEnabled = settings.enabled;
 
-      console.log('xModerator initialized', { isEnabled, settings });
+      console.log('🛡️ xModerator initialized successfully!', { isEnabled, settings });
+
+      // Show a brief notification that extension is active
+      showExtensionStatus();
 
       // Start monitoring
       if (isEnabled) {
@@ -137,6 +142,12 @@
         settings.sensitivity
       );
 
+      console.log('🔍 xModerator: Analyzed tweet:', {
+        text: tweetData.text.substring(0, 50) + '...',
+        categories: analysis.categories,
+        shouldBlock: analysis.shouldBlock
+      });
+
       // Check if any enabled categories were detected
       const blockedCategories = analysis.categories.filter(cat => 
         settings.categories[cat.category] === true
@@ -145,6 +156,7 @@
       if (analysis.shouldBlock && blockedCategories.length > 0) {
         const primaryCategory = blockedCategories[0].category;
         const reason = `${contentDetector.getCategoryDisplayName(primaryCategory)} content detected`;
+        console.log('🚫 xModerator: Blocking tweet for', primaryCategory, ':', reason);
         await blockTweet(tweetElement, primaryCategory, reason);
         return;
       }
@@ -357,6 +369,35 @@
         break;
     }
   });
+
+  // Show extension status notification
+  function showExtensionStatus() {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #1d9bf0;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-family: TwitterChirp, -apple-system, sans-serif;
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 10000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: opacity 0.3s;
+    `;
+    notification.innerHTML = '🛡️ xModerator Active';
+    document.body.appendChild(notification);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      setTimeout(() => notification.remove(), 300);
+    }, 3000);
+  }
 
   // Initialize when page loads
   if (document.readyState === 'loading') {
