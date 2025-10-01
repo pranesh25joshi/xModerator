@@ -46,7 +46,7 @@ class OptionsManager {
       blockedUsers: [],
       sensitivity: 'medium',
       showBlockedCount: true,
-      blurInsteadOfHide: false
+      blurInsteadOfHide: true
     };
   }
 

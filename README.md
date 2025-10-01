@@ -35,8 +35,8 @@ xModerator is optimized for all Chromium-based browsers with enhanced Arc Browse
 - **Intelligent detection**: Advanced content analysis with adjustable sensitivity
 
 ### 🎨 **Flexible Display Options**
+- **Blur with reveal**: Blur content with option to show on demand (default, dark theme compatible)
 - **Hide completely**: Remove blocked content entirely
-- **Blur with reveal**: Blur content with option to show on demand (dark theme compatible)
 - **Real-time counter**: See how many tweets you've blocked today
 
 ### ⚙️ **Comprehensive Settings**

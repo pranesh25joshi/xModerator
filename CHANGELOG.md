@@ -13,6 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Chrome Web Store publication
 - Advanced filtering rules engine
 
+## [1.1.0] - 2025-10-01
+
+### Changed
+- 🎯 **Default Behavior Update**: Blur with reveal option is now the default instead of hiding content completely
+- 📖 **Documentation**: Updated all guides to reflect new blur-first approach
+- 🎨 **User Experience**: New users will see filtered content as blurred rather than hidden, providing better content discovery
+
+### Improved
+- Better user experience for first-time installations
+- More intuitive content filtering approach
+
 ## [1.0.9] - 2025-10-01
 
 ### Added

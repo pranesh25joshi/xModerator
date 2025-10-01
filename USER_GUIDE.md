@@ -152,8 +152,8 @@ Track your filtering activity:
 ### What You'll See:
 
 #### Filtered Content Display
-1. **Hide Mode**: Blocked tweets are completely hidden from your timeline
-2. **Blur Mode**: Content is blurred with a reveal button and dark-themed overlay
+1. **Blur Mode** (default): Content is blurred with a reveal button and dark-themed overlay
+2. **Hide Mode**: Blocked tweets are completely hidden from your timeline
 3. **Block user buttons** appear on problematic accounts  
 4. **Statistics counter** updates in real-time (if enabled)
 

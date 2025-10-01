@@ -16,7 +16,7 @@ class StorageManager {
       blockedUsers: [],
       sensitivity: 'medium', // low, medium, high
       showBlockedCount: true,
-      blurInsteadOfHide: false
+      blurInsteadOfHide: true
     };
   }
 
