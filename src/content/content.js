@@ -16,6 +16,11 @@
     try {
       console.log('🛡️ xModerator: Starting up on', window.location.hostname);
       
+      // Check Arc Browser compatibility
+      if (window.arcCompat && !window.arcCompat.checkArcCompatibility()) {
+        console.warn('⚠️ Arc Browser compatibility issues detected');
+      }
+      
       // Create utility instances
       storageManager = new StorageManager();
       contentDetector = new ContentDetector();
@@ -619,5 +624,21 @@
       setTimeout(init, 1000);
     }
   }).observe(document, { subtree: true, childList: true });
+
+  // Expose functions for Arc Browser integration
+  window.xModeratorRescan = () => {
+    if (isEnabled) {
+      console.log('🔄 Arc Browser triggered rescan');
+      scanExistingTweets();
+    }
+  };
+
+  window.xModeratorUpdateSettings = (newSettings) => {
+    console.log('🌈 Arc Browser updating settings', newSettings);
+    settings = { ...settings, ...newSettings };
+    if (isEnabled) {
+      scanExistingTweets();
+    }
+  };
 
 })();

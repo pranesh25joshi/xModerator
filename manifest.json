@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "xModerator",
-  "version": "1.0.8",
-  "description": "Block unwanted content on Twitter/X including politics, violence, adult content, and more. Create a cleaner, safer browsing experience.",
+  "version": "1.0.9",
+  "description": "Block unwanted content on Twitter/X including politics, violence, adult content, and more. Works on Chrome, Arc, Edge, and other Chromium browsers.",
   
   "permissions": [
     "storage",
     "activeTab",
-    "scripting"
+    "scripting",
+    "tabs"
   ],
   
   "host_permissions": [
@@ -23,6 +24,7 @@
     {
       "matches": ["*://twitter.com/*", "*://x.com/*"],
       "js": [
+        "src/utils/arc-compat.js",
         "src/utils/storage.js",
         "src/utils/detector.js", 
         "src/content/content.js"

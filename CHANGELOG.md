@@ -7,14 +7,95 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+- Firefox browser support
+- Safari browser support (macOS)
+- Chrome Web Store publication
+- Advanced filtering rules engine
+
+## [1.0.9] - 2025-10-01
+
 ### Added
-- Nothing yet
+- 🌈 **Arc Browser Support** with enhanced optimizations
+  - Sidebar integration and positioning adjustments
+  - Automatic theme synchronization (light/dark)
+  - Arc Spaces awareness for potential per-space settings
+  - Performance optimizations for Arc's architecture
+  - Dedicated [Arc Installation Guide](ARC_INSTALLATION.md)
+- 🎯 **Individual Keyword Customization** - NEW MAJOR FEATURE
+  - Control over all 164 detection words across 6 categories
+  - Enable/disable specific keywords with checkbox interface
+  - Category-level bulk actions (enable/disable all in category)
+  - Real-time updates across all browser tabs
+  - Complete word count visibility (Politics: 39, Violence: 35, Adult: 47, etc.)
+- 🔧 **Enhanced Browser Compatibility**
+  - Microsoft Edge full support
+  - Opera browser full support
+  - Universal extension compatibility layer
+  - Browser-specific optimizations
+- 📚 **Comprehensive Documentation Updates**
+  - Browser-specific installation guides
+  - Updated user guide with new features
+  - Arc Browser specific troubleshooting
+  - Enhanced README with multi-browser support table
 
 ### Changed
-- Nothing yet
+- **Expanded keyword lists** for better detection coverage
+  - Politics: 39 words (was ~20)
+  - Violence: 35 words (was ~20) 
+  - Adult Content: 47 words (was ~15)
+  - Spam: 14 words (maintained)
+  - Negativity: 17 words (maintained)
+  - Promotions: 12 words (maintained)
+- **Improved UI/UX** 
+  - Dark theme compatible overlays for blur mode
+  - Better contrast and readability
+  - Arc-specific styling integration
+- **Enhanced manifest** with broader browser support declarations
+- **Performance optimizations** for multi-browser compatibility
 
 ### Fixed
-- Nothing yet
+- Remove button functionality for custom keywords and blocked users
+- Event handling improvements (replaced onclick with addEventListener)
+- Global scope accessibility for options manager
+- Content Security Policy compliance across browsers
+- Improved error handling for storage operations
+
+### Technical Details
+- Added Arc Browser compatibility layer (`arc-compat.js`)
+- Universal browser API wrapper for cross-browser functionality
+- Enhanced CSS with browser-specific optimizations
+- Improved storage management with better error handling
+- Added tabs permission for enhanced cross-tab communication
+
+### Browser Support
+- ✅ Chrome 88+ (Full Support)
+- ✅ Arc Browser 1.0+ (Enhanced Support)
+- ✅ Microsoft Edge 88+ (Full Support)
+- ✅ Opera 74+ (Full Support)
+- 🚧 Firefox (In Development)
+- 🚧 Safari (Planned)
+
+## [1.0.8] - 2025-10-01
+
+### Fixed
+- Remove button functionality for keywords and blocked users
+- Event listener improvements for better reliability
+- Global scope accessibility for options manager
+
+## [1.0.7] - 2025-10-01
+
+### Added
+- Initial keyword preference customization system
+- Storage management for user keyword preferences
+- UI infrastructure for keyword customization
+
+## [1.0.6] - 2025-10-01
+
+### Fixed
+- Content Security Policy violations
+- Event handler compliance
+- Dark theme styling improvements
 
 ## [1.0.0] - 2024-10-01
 

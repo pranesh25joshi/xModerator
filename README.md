@@ -1,13 +1,24 @@
 # xModerator 🛡️
 
-A powerful Chrome/Brave extension that helps you create a cleaner, safer Twitter/X experience by blocking unwanted content including politics, violence, adult content, spam, and more.
+A powerful browser extension that helps you create a cleaner, safer Twitter/X experience by blocking unwanted content including politics, violence, adult content, spam, and more.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/pranesh25joshi/xmoderator/releases)
+[![Version](https://img.shields.io/badge/version-1.0.9-blue.svg)](https://github.com/pranesh25joshi/xmoderator/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Chrome Web Store](https://img.shields.io/badge/chrome--web--store-coming--soon-orange.svg)](#)
 [![Downloads](https://img.shields.io/github/downloads/pranesh25joshi/xmoderator/total.svg)](https://github.com/pranesh25joshi/xmoderator/releases)
 
 > **Transform your X (Twitter) experience with intelligent content filtering**
+
+## 🌐 **Browser Support**
+
+| Browser | Status | Installation |
+|---------|--------|-------------|
+| 🟢 **Chrome** | ✅ Full Support | [Install Guide](INSTALLATION.md) |
+| 🌈 **Arc Browser** | ✅ Full Support + Optimizations | [Arc Guide](ARC_INSTALLATION.md) |
+| 🔵 **Microsoft Edge** | ✅ Full Support | [Install Guide](INSTALLATION.md) |
+| 🔴 **Opera** | ✅ Full Support | [Install Guide](INSTALLATION.md) |
+| 🦊 **Firefox** | 🚧 Coming Soon | Planning Phase |
+| 🍎 **Safari** | 🚧 Coming Soon | Planned |
 
 ---
 
@@ -15,19 +26,28 @@ A powerful Chrome/Brave extension that helps you create a cleaner, safer Twitter
 
 ### 🎯 **Smart Content Filtering**
 - **Category-based blocking**: Politics, Violence, Adult Content, Spam, Negativity, Promotions
+- **🆕 Individual keyword control**: Enable/disable any of the 164 detection words
 - **Custom keywords**: Add your own words and phrases to block
 - **User blocking**: Hide tweets from specific users
 - **Intelligent detection**: Advanced content analysis with adjustable sensitivity
 
 ### 🎨 **Flexible Display Options**
 - **Hide completely**: Remove blocked content entirely
-- **Blur with reveal**: Blur content with option to show on demand
+- **Blur with reveal**: Blur content with option to show on demand (dark theme compatible)
 - **Real-time counter**: See how many tweets you've blocked today
 
 ### ⚙️ **Comprehensive Settings**
+- **🆕 Precision word control**: Customize every detection word individually
 - **Sensitivity levels**: Low, Medium, High filtering
 - **Import/Export**: Backup and restore your settings
 - **Detailed statistics**: Track your blocking stats by category
+- **Privacy-focused**: All data stored locally on your device
+
+### 🌈 **Multi-Browser Support**
+- **Arc Browser**: Enhanced with sidebar integration and theme sync
+- **Chrome/Edge/Opera**: Full feature support
+- **Firefox**: Coming soon
+- **Performance optimized**: Works seamlessly across all supported browsers
 - **Auto-save**: Your preferences are saved automatically
 
 ### 🌙 **Modern Design**
@@ -62,18 +82,22 @@ A powerful Chrome/Brave extension that helps you create a cleaner, safer Twitter
 
 1. **Download Extension**
    - Go to [Releases](https://github.com/pranesh25joshi/xmoderator/releases/latest)
-   - Download `xmoderator-v1.0.0.zip`
+   - Download `xmoderator-ARC-COMPATIBLE-v1.0.9.zip`
    - Extract the ZIP file to a folder
 
 2. **Install in Browser**
-   - Open Chrome/Brave and go to `chrome://extensions/`
+   - **Chrome**: Open `chrome://extensions/`
+   - **Arc Browser**: Type `arc://extensions/` ([Arc Guide](ARC_INSTALLATION.md))
+   - **Edge**: Open `edge://extensions/`
+   - **Opera**: Open `opera://extensions/`
    - Enable "Developer mode" (toggle in top-right)
    - Click "Load unpacked" and select the extracted folder
    - Pin the extension by clicking the puzzle icon → pin xModerator
 
-3. **Start Using**
+3. **Configure & Start Using**
+   - Click the xModerator icon 🛡️ to open settings
+   - **NEW**: Visit "Customize Words" tab to fine-tune detection
    - Visit [x.com](https://x.com) or [twitter.com](https://twitter.com)
-   - Click the xModerator icon to configure your filters
    - Enjoy a cleaner social media experience!
 
 ### Alternative Installation Methods
@@ -132,14 +156,26 @@ Access cutting-edge features:
 
 ### Content Categories
 
-| Category | Description | Examples |
-|----------|-------------|----------|
-| 🏛️ **Politics** | Political content, elections, politicians | trump, biden, election, congress |
-| ⚠️ **Violence** | Violent content, aggression, harmful material | violence, attack, weapon, war |
-| 🔞 **Adult** | NSFW content, adult themes, explicit material | nsfw, adult, explicit |
-| 🚫 **Spam** | Spam, scams, suspicious links | "click here", "free money", urgent |
-| 😞 **Negativity** | Negative emotions, toxic content | hate, angry, terrible, awful |
-| 💰 **Promotions** | Advertisements, sponsored content | sponsored, sale, discount, ad |
+| Category | Description | Examples | Words Available |
+|----------|-------------|----------|-----------------|
+| 🏛️ **Politics** | Political content, elections, politicians | trump, biden, election, congress | 39 detection words |
+| ⚠️ **Violence** | Violent content, aggression, harmful material | violence, attack, weapon, war | 35 detection words |
+| 🔞 **Adult** | NSFW content, adult themes, explicit material | nsfw, adult, explicit, porn | 47 detection words |
+| 🚫 **Spam** | Spam, scams, suspicious links | "click here", "free money", urgent | 14 detection words |
+| 😞 **Negativity** | Negative emotions, toxic content | hate, angry, terrible, awful | 17 detection words |
+| 💰 **Promotions** | Advertisements, sponsored content | sponsored, sale, discount, ad | 12 detection words |
+
+### 🆕 Individual Keyword Customization
+
+**NEW FEATURE**: Take complete control over content detection:
+
+- **Browse all 164 detection words** across all categories
+- **Enable/disable individual keywords** with simple checkboxes
+- **Category-level controls** for bulk enable/disable actions
+- **Real-time updates** - changes apply instantly across all browser tabs
+- **Private customization** - all preferences stored locally on your device
+
+**Access via**: Settings → Customize Words tab
 
 ### Sensitivity Levels
 

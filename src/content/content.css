@@ -242,3 +242,69 @@
   line-height: 1.4 !important;
   box-sizing: border-box !important;
 }
+
+/* Arc Browser Specific Optimizations */
+/* Arc browser detection and styling */
+@media screen {
+  /* Arc browser sidebar compensation */
+  .xmoderator-overlay {
+    margin-left: var(--arc-sidebar-width, 0px) !important;
+    max-width: calc(100vw - var(--arc-sidebar-width, 0px)) !important;
+  }
+  
+  /* Arc browser popup positioning */
+  .xmoderator-popup {
+    z-index: 999999 !important;
+    position: fixed !important;
+  }
+}
+
+/* Arc Browser Dark Theme Support */
+@media (prefers-color-scheme: dark) {
+  .twitter-blocker-blocked-msg {
+    background: var(--xmoderator-overlay-bg, rgba(28, 28, 30, 0.95)) !important;
+  }
+  
+  .blocked-content {
+    background: rgba(44, 44, 46, 0.95) !important;
+    color: var(--xmoderator-text-color, #ffffff) !important;
+    border-color: var(--xmoderator-border-color, rgba(99, 99, 102, 0.3)) !important;
+  }
+  
+  .twitter-blocker-reveal-btn,
+  .block-user-btn {
+    background: rgba(0, 122, 255, 0.8) !important;
+    color: white !important;
+    border-color: rgba(0, 122, 255, 0.3) !important;
+  }
+  
+  .twitter-blocker-reveal-btn:hover,
+  .block-user-btn:hover {
+    background: rgba(0, 122, 255, 1) !important;
+  }
+}
+
+/* Arc Browser Space-specific styles (if detected) */
+[data-arc-space] .twitter-blocker-blocked-msg {
+  /* Adjust for Arc Spaces context */
+  border-radius: 12px !important;
+}
+
+[data-arc-space="work"] .blocked-content {
+  /* More professional styling for work spaces */
+  background: rgba(248, 249, 250, 0.98) !important;
+  border: 2px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-arc-space="personal"] .blocked-content {
+  /* More relaxed styling for personal spaces */
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Arc Browser compatibility layer */
+.arc-browser .twitter-blocker-counter {
+  /* Adjust counter positioning for Arc's UI */
+  top: calc(var(--arc-toolbar-height, 60px) + 10px) !important;
+  right: calc(var(--arc-sidebar-width, 0px) + 20px) !important;
+}
