@@ -58,7 +58,7 @@ We welcome many types of contributions:
 ### Prerequisites
 
 - **Git** - Version control
-- **Chrome/Brave** - For testing the extension
+- **Chromium Browser** - Chrome, Arc, Edge, Opera, or Brave for testing
 - **Code Editor** - VS Code recommended with extensions:
   - ESLint
   - Prettier
@@ -83,7 +83,11 @@ We welcome many types of contributions:
    ```
 
 4. **Load extension in browser**
-   - Open Chrome and go to `chrome://extensions/`
+   - **Chrome**: Go to `chrome://extensions/`
+   - **Arc**: Go to `arc://extensions/`
+   - **Edge**: Go to `edge://extensions/`
+   - **Opera**: Go to `opera://extensions/`
+   - **Brave**: Go to `brave://extensions/`
    - Enable "Developer mode"
    - Click "Load unpacked" and select the project folder
    - The extension should now be loaded for testing
@@ -269,10 +273,12 @@ async function analyzeContent(content, settings) {
    - Settings save and load correctly
    - Content filtering works as expected
 
-2. **Cross-browser testing**
+2. **Chromium browser testing**
    - Chrome (latest)
+   - Arc (latest, if available)
+   - Edge (latest)
+   - Opera (if possible)
    - Brave (latest)
-   - Edge (if possible)
 
 3. **Cross-platform testing**
    - Windows

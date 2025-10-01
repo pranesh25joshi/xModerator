@@ -2,7 +2,7 @@
 
 ## 🌐 Browser Support
 
-xModerator supports multiple browsers with optimized experiences:
+xModerator is designed for **Chromium-based browsers** with optimized experiences:
 
 | Browser | Status | Installation | Special Features |
 |---------|--------|-------------|------------------|
@@ -10,20 +10,21 @@ xModerator supports multiple browsers with optimized experiences:
 | 🌈 **Arc Browser** | ✅ Enhanced Support | [Arc Guide](ARC_INSTALLATION.md) | Sidebar integration, theme sync |
 | 🔵 **Microsoft Edge** | ✅ Full Support | This Guide | Standard features |
 | 🔴 **Opera** | ✅ Full Support | This Guide | Standard features |
-| 🦊 **Firefox** | 🚧 Coming Soon | In Development | - |
-| 🍎 **Safari** | 🚧 Planned | Future | - |
+| � **Brave** | ✅ Full Support | This Guide | Standard features |
 
 ---
 
-## Quick Install (Chrome/Edge/Opera)
+## Quick Install (Chromium Browsers)
 
 ### Method 1: From Release (Recommended)
-1. **Download** `xmoderator-ARC-COMPATIBLE-v1.0.9.zip` from the [Releases page](https://github.com/pranesh25joshi/xModerator/releases)
+1. **Download** `xmoderator-CHROMIUM-v1.0.9.zip` from the [Releases page](https://github.com/pranesh25joshi/xModerator/releases)
 2. **Extract** the ZIP file to a folder on your computer
 3. **Open your browser** and navigate to:
    - **Chrome**: `chrome://extensions/`
+   - **Arc**: `arc://extensions/`
    - **Edge**: `edge://extensions/`
    - **Opera**: `opera://extensions/`
+   - **Brave**: `brave://extensions/`
 4. **Enable "Developer mode"** (toggle in top-right corner)
 5. **Click "Load unpacked"** and select the extracted folder
 6. **Pin the extension** to your toolbar for easy access

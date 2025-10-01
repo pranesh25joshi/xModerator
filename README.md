@@ -9,16 +9,19 @@ A powerful browser extension that helps you create a cleaner, safer Twitter/X ex
 
 > **Transform your X (Twitter) experience with intelligent content filtering**
 
-## 🌐 **Browser Support**
+## 🌐 **Chromium Browser Support**
 
-| Browser | Status | Installation |
-|---------|--------|-------------|
-| 🟢 **Chrome** | ✅ Full Support | [Install Guide](INSTALLATION.md) |
-| 🌈 **Arc Browser** | ✅ Full Support + Optimizations | [Arc Guide](ARC_INSTALLATION.md) |
-| 🔵 **Microsoft Edge** | ✅ Full Support | [Install Guide](INSTALLATION.md) |
-| 🔴 **Opera** | ✅ Full Support | [Install Guide](INSTALLATION.md) |
-| 🦊 **Firefox** | 🚧 Coming Soon | Planning Phase |
-| 🍎 **Safari** | 🚧 Coming Soon | Planned |
+xModerator is optimized for all Chromium-based browsers with enhanced Arc Browser integration:
+
+| Browser | Status | Special Features |
+|---------|--------|------------------|
+| 🟢 **Chrome** | ✅ Full Support | Standard Chromium features |
+| 🌈 **Arc Browser** | ✅ Enhanced Support | Sidebar integration, theme sync, performance optimization |
+| 🔵 **Microsoft Edge** | ✅ Full Support | Standard Chromium features |
+| 🔴 **Opera** | ✅ Full Support | Standard Chromium features |
+| 🟣 **Brave** | ✅ Full Support | Standard Chromium features |
+
+*Firefox and Safari support planned for future releases*
 
 ---
 
@@ -82,14 +85,15 @@ A powerful browser extension that helps you create a cleaner, safer Twitter/X ex
 
 1. **Download Extension**
    - Go to [Releases](https://github.com/pranesh25joshi/xmoderator/releases/latest)
-   - Download `xmoderator-ARC-COMPATIBLE-v1.0.9.zip`
+   - Download `xmoderator-CHROMIUM-v1.0.9.zip`
    - Extract the ZIP file to a folder
 
-2. **Install in Browser**
+2. **Install in Chromium Browser**
    - **Chrome**: Open `chrome://extensions/`
    - **Arc Browser**: Type `arc://extensions/` ([Arc Guide](ARC_INSTALLATION.md))
    - **Edge**: Open `edge://extensions/`
    - **Opera**: Open `opera://extensions/`
+   - **Brave**: Open `brave://extensions/`
    - Enable "Developer mode" (toggle in top-right)
    - Click "Load unpacked" and select the extracted folder
    - Pin the extension by clicking the puzzle icon → pin xModerator

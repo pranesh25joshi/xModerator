@@ -1,4 +1,14 @@
-# 🎯 xModerator User Guide
+# ## � Browser Compatibility
+
+xModerator is designed for **Chromium-based browsers**:
+
+| Browser | Support Level | Installation Guide |
+|---------|---------------|-------------------|
+| 🟢 **Chrome** | Full Support | [Chrome Guide](INSTALLATION.md) |
+| 🌈 **Arc Browser** | Full Support + Arc Optimizations | [Arc Guide](ARC_INSTALLATION.md) |
+| 🔵 **Microsoft Edge** | Full Support | [Edge Guide](INSTALLATION.md) |
+| 🔴 **Opera** | Full Support | [Opera Guide](INSTALLATION.md) |
+| 🦁 **Brave** | Full Support | [Brave Guide](INSTALLATION.md) |or User Guide
 
 ## 🌐 Browser Compatibility
 
@@ -15,7 +25,7 @@ xModerator works seamlessly across multiple browsers:
 ## �🚀 Getting Started
 
 ### Step 1: Install the Extension
-1. **Download** the latest `xmoderator-ARC-COMPATIBLE-v1.0.9.zip` from [GitHub Releases](https://github.com/pranesh25joshi/xModerator/releases)
+1. **Download** the latest `xmoderator-CHROMIUM-v1.0.9.zip` from [GitHub Releases](https://github.com/pranesh25joshi/xModerator/releases)
 2. **Extract** the ZIP file to a folder (e.g., `Downloads/xModerator/`)
 3. **Choose your browser**:
    - **Chrome/Edge/Opera**: Go to `chrome://extensions/` or `edge://extensions/`
