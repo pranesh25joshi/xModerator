@@ -15,8 +15,10 @@ class PopupManager {
       this.setupEventListeners();
       this.updateUI();
       this.isLoading = false;
+      console.log('✅ Popup: Initialization complete');
     } catch (error) {
-      console.error('Error initializing popup:', error);
+      console.error('❌ Popup: Error initializing popup:', error);
+      this.isLoading = false; // Important: stop loading even on error
       this.showError('Failed to load extension data');
     }
   }
@@ -172,14 +174,16 @@ class PopupManager {
 
   async resetStats() {
     try {
-      const response = await this.sendMessage({ action: 'resetStats' });
+      const storageManager = new StorageManager();
+      const success = await storageManager.resetStats();
       
-      if (response.success) {
-        this.stats = response.stats;
+      if (success) {
+        this.stats = await storageManager.getStats();
         this.updateUI();
         this.showSuccess('Statistics reset');
+        console.log('✅ Popup: Stats reset successfully');
       } else {
-        throw new Error(response.error || 'Failed to reset stats');
+        throw new Error('Failed to reset stats');
       }
     } catch (error) {
       console.error('Error resetting stats:', error);
