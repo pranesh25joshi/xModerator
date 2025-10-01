@@ -120,8 +120,14 @@ class ContentDetector {
     const textLength = text.length;
     const keywordLength = keyword.length;
     
-    // Base confidence
-    let confidence = 30;
+    // Base confidence - higher for explicit words
+    let confidence = 40; // Increased from 30
+    
+    // Extra boost for explicit adult content keywords
+    const explicitKeywords = ['adult', 'porn', 'sex', 'nude', 'naked', 'nsfw', 'xxx'];
+    if (explicitKeywords.includes(keyword.toLowerCase())) {
+      confidence += 20; // Extra boost for explicit content
+    }
     
     // Boost for multiple occurrences
     confidence += (occurrences - 1) * 15;
@@ -149,12 +155,12 @@ class ContentDetector {
   // Get blocking threshold based on sensitivity
   getSensitivityThreshold(sensitivity) {
     const thresholds = {
-      'low': 70,    // Only block very obvious content
-      'medium': 45, // Balance between blocking and allowing
-      'high': 25    // Block more aggressively
+      'low': 50,    // Only block very obvious content
+      'medium': 30, // Balance between blocking and allowing (lowered from 45)
+      'high': 15    // Block more aggressively (lowered from 25)
     };
     
-    return thresholds[sensitivity] || 45;
+    return thresholds[sensitivity] || 30;
   }
 
   // Check if user is in blocked list

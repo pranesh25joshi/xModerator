@@ -478,9 +478,16 @@
       <div class="xmoderator-blocked-content">
         <div class="xmoderator-blocked-icon">🛡️</div>
         <div class="xmoderator-blocked-text">Content Filtered - ${reason}</div>
-        <button class="xmoderator-show-anyway" onclick="this.parentElement.parentElement.style.display='none'; this.parentElement.parentElement.nextSibling.style.display='block';">Show anyway</button>
+        <button class="xmoderator-show-anyway">Show anyway</button>
       </div>
     `;
+
+    // Add event listener for show button
+    const showButton = overlay.querySelector('.xmoderator-show-anyway');
+    showButton.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      tweetElement.style.display = 'block';
+    });
 
     // Hide original tweet
     tweetElement.style.display = 'none';
@@ -499,9 +506,16 @@
     overlay.innerHTML = `
       <div class="xmoderator-blur-content">
         <div class="xmoderator-blur-text">🛡️ Content Filtered - ${reason}</div>
-        <button class="xmoderator-show-anyway" onclick="this.parentElement.parentElement.remove(); this.parentElement.parentElement.previousSibling.style.filter='none';">Show anyway</button>
+        <button class="xmoderator-show-anyway">Show anyway</button>
       </div>
     `;
+
+    // Add event listener for show button
+    const showButton = overlay.querySelector('.xmoderator-show-anyway');
+    showButton.addEventListener('click', () => {
+      overlay.remove();
+      tweetElement.style.filter = 'none';
+    });
 
     tweetElement.parentNode.insertBefore(overlay, tweetElement.nextSibling);
   }
@@ -514,12 +528,14 @@
     const blockButton = document.createElement('button');
     blockButton.className = 'xmoderator-block-user';
     blockButton.textContent = `Block @${userData.username}`;
-    blockButton.onclick = async () => {
+    
+    // Add event listener instead of onclick
+    blockButton.addEventListener('click', async () => {
       await storageManager.addBlockedUser(userData.username);
       console.log('🚫 xModerator: User blocked:', userData.username);
       blockButton.textContent = 'Blocked ✓';
       blockButton.disabled = true;
-    };
+    });
 
     // Add to tweet actions area
     const actionsArea = tweetElement.querySelector('[role="group"], [data-testid="reply"]')?.parentElement;
