@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xModerator - Settings</title>
+    <link rel="stylesheet" href="options.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="icon">🛡️</span>
+                    <h1>xModerator</h1>
+                </div>
+                <div class="version">Version 1.0.0</div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <button class="nav-btn active" data-tab="general">General</button>
+            <button class="nav-btn" data-tab="categories">Categories</button>
+            <button class="nav-btn" data-tab="keywords">Keywords</button>
+            <button class="nav-btn" data-tab="users">Blocked Users</button>
+            <button class="nav-btn" data-tab="stats">Statistics</button>
+            <button class="nav-btn" data-tab="import-export">Data</button>
+        </nav>
+
+        <!-- Content -->
+        <main class="content">
+            <!-- General Tab -->
+            <div class="tab-content active" id="general-tab">
+                <section class="settings-section">
+                    <h2>General Settings</h2>
+                    
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <label class="setting-label">Enable Content Blocking</label>
+                            <p class="setting-description">Turn the extension on or off globally</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="enabled-setting">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <label class="setting-label">Detection Sensitivity</label>
+                            <p class="setting-description">How aggressive the content filtering should be</p>
+                        </div>
+                        <select id="sensitivity-setting" class="setting-select">
+                            <option value="low">Low - Only obvious content</option>
+                            <option value="medium">Medium - Balanced approach</option>
+                            <option value="high">High - Aggressive filtering</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <label class="setting-label">Blocking Method</label>
+                            <p class="setting-description">How blocked content should be displayed</p>
+                        </div>
+                        <div class="radio-group">
+                            <label class="radio-item">
+                                <input type="radio" name="blocking-method" value="hide" checked>
+                                <span class="radio-custom"></span>
+                                <span class="radio-label">Hide completely</span>
+                            </label>
+                            <label class="radio-item">
+                                <input type="radio" name="blocking-method" value="blur">
+                                <span class="radio-custom"></span>
+                                <span class="radio-label">Blur with reveal option</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <label class="setting-label">Show Blocked Counter</label>
+                            <p class="setting-description">Display a counter of blocked content on Twitter</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="show-counter-setting">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Categories Tab -->
+            <div class="tab-content" id="categories-tab">
+                <section class="settings-section">
+                    <h2>Content Categories</h2>
+                    <p class="section-description">Choose which types of content to block</p>
+                    
+                    <div class="categories-grid">
+                        <div class="category-card" data-category="politics">
+                            <div class="category-header">
+                                <span class="category-icon">🏛️</span>
+                                <h3>Politics</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <p class="category-description">Political content, elections, politicians, campaigns</p>
+                            <div class="category-keywords">
+                                <span class="keyword-tag">trump</span>
+                                <span class="keyword-tag">biden</span>
+                                <span class="keyword-tag">election</span>
+                                <span class="keyword-tag">+more</span>
+                            </div>
+                        </div>
+
+                        <div class="category-card" data-category="violence">
+                            <div class="category-header">
+                                <span class="category-icon">⚠️</span>
+                                <h3>Violence</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <p class="category-description">Violent content, aggression, harmful content</p>
+                            <div class="category-keywords">
+                                <span class="keyword-tag">violence</span>
+                                <span class="keyword-tag">attack</span>
+                                <span class="keyword-tag">weapon</span>
+                                <span class="keyword-tag">+more</span>
+                            </div>
+                        </div>
+
+                        <div class="category-card" data-category="adult">
+                            <div class="category-header">
+                                <span class="category-icon">🔞</span>
+                                <h3>Adult Content</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <p class="category-description">NSFW content, adult themes, explicit material</p>
+                            <div class="category-keywords">
+                                <span class="keyword-tag">nsfw</span>
+                                <span class="keyword-tag">adult</span>
+                                <span class="keyword-tag">explicit</span>
+                                <span class="keyword-tag">+more</span>
+                            </div>
+                        </div>
+
+                        <div class="category-card" data-category="spam">
+                            <div class="category-header">
+                                <span class="category-icon">🚫</span>
+                                <h3>Spam</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <p class="category-description">Spam, scams, suspicious links, repetitive content</p>
+                            <div class="category-keywords">
+                                <span class="keyword-tag">click here</span>
+                                <span class="keyword-tag">free money</span>
+                                <span class="keyword-tag">urgent</span>
+                                <span class="keyword-tag">+more</span>
+                            </div>
+                        </div>
+
+                        <div class="category-card" data-category="negativity">
+                            <div class="category-header">
+                                <span class="category-icon">😞</span>
+                                <h3>Negativity</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <p class="category-description">Negative emotions, complaints, toxic content</p>
+                            <div class="category-keywords">
+                                <span class="keyword-tag">hate</span>
+                                <span class="keyword-tag">angry</span>
+                                <span class="keyword-tag">terrible</span>
+                                <span class="keyword-tag">+more</span>
+                            </div>
+                        </div>
+
+                        <div class="category-card" data-category="promotions">
+                            <div class="category-header">
+                                <span class="category-icon">💰</span>
+                                <h3>Promotions</h3>
+                                <label class="toggle-switch">
+                                    <input type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                            <p class="category-description">Advertisements, sponsored content, promotions</p>
+                            <div class="category-keywords">
+                                <span class="keyword-tag">sponsored</span>
+                                <span class="keyword-tag">sale</span>
+                                <span class="keyword-tag">discount</span>
+                                <span class="keyword-tag">+more</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Keywords Tab -->
+            <div class="tab-content" id="keywords-tab">
+                <section class="settings-section">
+                    <h2>Custom Keywords</h2>
+                    <p class="section-description">Add your own keywords to block specific content</p>
+                    
+                    <div class="keyword-input-section">
+                        <div class="input-group">
+                            <input type="text" id="keyword-input" placeholder="Enter keyword or phrase" maxlength="50">
+                            <button id="add-keyword-btn" class="add-btn">Add</button>
+                        </div>
+                        <p class="input-help">Keywords are case-insensitive and will block tweets containing these terms</p>
+                    </div>
+
+                    <div class="keywords-list" id="keywords-list">
+                        <!-- Keywords will be dynamically added here -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- Blocked Users Tab -->
+            <div class="tab-content" id="users-tab">
+                <section class="settings-section">
+                    <h2>Blocked Users</h2>
+                    <p class="section-description">Block tweets from specific users</p>
+                    
+                    <div class="user-input-section">
+                        <div class="input-group">
+                            <input type="text" id="user-input" placeholder="Enter username (without @)" maxlength="30">
+                            <button id="add-user-btn" class="add-btn">Block User</button>
+                        </div>
+                        <p class="input-help">Enter Twitter usernames to completely hide their tweets</p>
+                    </div>
+
+                    <div class="users-list" id="users-list">
+                        <!-- Blocked users will be dynamically added here -->
+                    </div>
+                </section>
+            </div>
+
+            <!-- Statistics Tab -->
+            <div class="tab-content" id="stats-tab">
+                <section class="settings-section">
+                    <h2>Statistics</h2>
+                    <p class="section-description">View your content blocking statistics</p>
+                    
+                    <div class="stats-overview">
+                        <div class="stat-card">
+                            <div class="stat-number" id="total-blocked-stat">0</div>
+                            <div class="stat-label">Total Blocked</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="today-blocked-stat">0</div>
+                            <div class="stat-label">Blocked Today</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="avg-daily-stat">0</div>
+                            <div class="stat-label">Daily Average</div>
+                        </div>
+                    </div>
+
+                    <div class="category-stats">
+                        <h3>By Category</h3>
+                        <div class="category-stats-list" id="category-stats-list">
+                            <!-- Category stats will be dynamically added here -->
+                        </div>
+                    </div>
+
+                    <div class="stats-actions">
+                        <button id="reset-stats-btn" class="danger-btn">Reset All Statistics</button>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Import/Export Tab -->
+            <div class="tab-content" id="import-export-tab">
+                <section class="settings-section">
+                    <h2>Import & Export</h2>
+                    <p class="section-description">Backup and restore your settings</p>
+                    
+                    <div class="data-actions">
+                        <div class="action-card">
+                            <h3>Export Settings</h3>
+                            <p>Download your current settings and statistics as a backup file</p>
+                            <button id="export-btn" class="primary-btn">Export Data</button>
+                        </div>
+
+                        <div class="action-card">
+                            <h3>Import Settings</h3>
+                            <p>Restore settings from a previously exported backup file</p>
+                            <input type="file" id="import-file" accept=".json" style="display: none;">
+                            <button id="import-btn" class="secondary-btn">Import Data</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2024 xModerator. Made for a better social media experience.</p>
+                <div class="footer-actions">
+                    <button id="save-settings-btn" class="primary-btn">Save Settings</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="options.js"></script>
+</body>
+</html>
