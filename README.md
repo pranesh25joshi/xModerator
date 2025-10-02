@@ -28,8 +28,9 @@ xModerator is optimized for all Chromium-based browsers with enhanced Arc Browse
 ## ✨ Features
 
 ### 🎯 **Smart Content Filtering**
-- **Category-based blocking**: Politics, Violence, Adult Content, Spam, Negativity, Promotions
-- **🆕 Individual keyword control**: Enable/disable any of the 164 detection words
+- **Core categories enabled by default**: Politics, Violence, Adult Content
+- **Optional categories**: Spam, Negativity, Promotions (user can enable)
+- **🆕 Individual keyword control**: Enable/disable detection words within each category
 - **Custom keywords**: Add your own words and phrases to block
 - **User blocking**: Hide tweets from specific users
 - **Intelligent detection**: Advanced content analysis with adjustable sensitivity
@@ -85,7 +86,7 @@ xModerator is optimized for all Chromium-based browsers with enhanced Arc Browse
 
 1. **Download Extension**
    - Go to [Releases](https://github.com/pranesh25joshi/xmoderator/releases/latest)
-   - Download `xmoderator-CHROMIUM-v1.1.0.zip`
+   - Download `xmoderator-CHROMIUM-v1.1.1.zip`
    - Extract the ZIP file to a folder
 
 2. **Install in Chromium Browser**

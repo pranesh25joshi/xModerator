@@ -13,6 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Chrome Web Store publication
 - Advanced filtering rules engine
 
+## [1.1.1] - 2025-10-02
+
+### Changed
+- 🎯 **Default Categories Refined**: Only Politics, Violence, and Adult Content enabled by default
+- 📝 **Keyword Lists Optimized**: Shortened detection word lists to reduce false positives
+- ⚙️ **User Choice**: Spam, Negativity, and Promotions are now optional categories users can enable
+
+### Improved
+- Reduced false positive content blocking
+- More focused default filtering experience
+- Better precision in content detection
+
 ## [1.1.0] - 2025-10-01
 
 ### Changed

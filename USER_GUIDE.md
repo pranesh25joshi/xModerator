@@ -25,7 +25,7 @@ xModerator works seamlessly across multiple browsers:
 ## �🚀 Getting Started
 
 ### Step 1: Install the Extension
-1. **Download** the latest `xmoderator-CHROMIUM-v1.1.0.zip` from [GitHub Releases](https://github.com/pranesh25joshi/xModerator/releases)
+1. **Download** the latest `xmoderator-CHROMIUM-v1.1.1.zip` from [GitHub Releases](https://github.com/pranesh25joshi/xModerator/releases)
 2. **Extract** the ZIP file to a folder (e.g., `Downloads/xModerator/`)
 3. **Choose your browser**:
    - **Chrome/Edge/Opera**: Go to `chrome://extensions/` or `edge://extensions/`

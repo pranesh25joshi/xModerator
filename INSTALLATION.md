@@ -17,7 +17,7 @@ xModerator is designed for **Chromium-based browsers** with optimized experience
 ## Quick Install (Chromium Browsers)
 
 ### Method 1: From Release (Recommended)
-1. **Download** `xmoderator-CHROMIUM-v1.1.0.zip` from the [Releases page](https://github.com/pranesh25joshi/xModerator/releases)
+1. **Download** `xmoderator-CHROMIUM-v1.1.1.zip` from the [Releases page](https://github.com/pranesh25joshi/xModerator/releases)
 2. **Extract** the ZIP file to a folder on your computer
 3. **Open your browser** and navigate to:
    - **Chrome**: `chrome://extensions/`

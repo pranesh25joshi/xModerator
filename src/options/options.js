@@ -38,7 +38,7 @@ class OptionsManager {
         politics: true,
         violence: true,
         adult: true,
-        spam: true,
+        spam: false,
         negativity: false,
         promotions: false
       },
