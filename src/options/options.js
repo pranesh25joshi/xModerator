@@ -662,23 +662,27 @@ class OptionsManager {
   }
 
   async enableCategoryKeywords(category) {
-    const categorySection = document.querySelector(`[data-category="${category}"]`).closest('.keyword-category-section');
+    const categorySection = document.querySelector(`.enable-category-btn[data-category="${category}"]`).closest('.keyword-category-section');
     const checkboxes = categorySection.querySelectorAll('.keyword-checkbox');
     
     checkboxes.forEach(checkbox => {
       checkbox.checked = true;
       this.updateKeywordPreference(category, checkbox.dataset.keyword, true);
     });
+    
+    this.showToast(`All ${category} keywords enabled`, 'success');
   }
 
   async disableCategoryKeywords(category) {
-    const categorySection = document.querySelector(`[data-category="${category}"]`).closest('.keyword-category-section');
+    const categorySection = document.querySelector(`.disable-category-btn[data-category="${category}"]`).closest('.keyword-category-section');
     const checkboxes = categorySection.querySelectorAll('.keyword-checkbox');
     
     checkboxes.forEach(checkbox => {
       checkbox.checked = false;
       this.updateKeywordPreference(category, checkbox.dataset.keyword, false);
     });
+    
+    this.showToast(`All ${category} keywords disabled`, 'success');
   }
 
   async enableAllKeywords() {
