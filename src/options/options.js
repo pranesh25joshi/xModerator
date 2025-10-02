@@ -509,46 +509,35 @@ class OptionsManager {
       // Get default keywords (we need to create a ContentDetector instance for this)
       const defaultKeywords = {
         politics: [
-          'trump', 'biden', 'election', 'vote', 'voting', 'democrat', 'republican',
-          'congress', 'senate', 'politician', 'political', 'campaign', 'poll',
-          'liberal', 'conservative', 'left wing', 'right wing', 'maga', 'gop',
+          'trump', 'biden', 'modi', 'election', 'democrat', 'republican',
+          'congress', 'senate', 'political',
+          'left wing', 'right wing',
           'politics', 'government', 'minister', 'parliament', 'bjp', 'leftist',
-          'rightwing', 'socialist', 'communist', 'capitalist', 'policy', 'law',
-          'bill', 'legislation', 'party', 'manifesto', 'cabinet', 'assembly',
-          'governor', 'mayor', 'mp', 'mla', 'lok sabha', 'rajya sabha'
+          'rightwing', 'socialist', 'assembly', 'mla', 'lok sabha', 'rajya sabha'
         ],
         violence: [
-          'kill', 'murder', 'death', 'dead', 'violence', 'violent', 'attack',
-          'shooting', 'gun', 'weapon', 'bomb', 'explosion', 'terror', 'war',
-          'fight', 'fighting', 'blood', 'bloody', 'assault', 'abuse', 'terrorist',
-          'riot', 'crime', 'stab', 'rape', 'injury', 'torture', 'hostage',
-          'execute', 'lynch', 'massacre', 'genocide', 'homicide', 'suicide',
-          'selfharm', 'harm', 'hurt', 'aggression', 'brutal', 'cruel', 'trauma',
-          'victim', 'perpetrator'
+          'kill', 'murder',
+          'shooting', 'weapon', 'bomb', 'explosion', 'terror', 'war', 'assault','terrorist',
+          'riot', 'stab', 'rape', 'torture', 'hostage', 'lynch', 'massacre', 'genocide', 'homicide', 'suicide',
+          'selfharm', 'perpetrator'
         ],
         adult: [
-          'porn', 'sex', 'nude', 'naked', 'adult', 'nsfw', 'xxx', 'sexy',
-          'onlyfans', 'escort', 'hookup', 'dating', 'hot singles', 'erotic',
-          'explicit', 'fetish', 'camgirl', 'boobs', 'strip', 'orgasm', 'cum',
+          'porn', 'sex', 'nude', 'naked', 'nsfw', 'xxx', 'sexy', 'escort', 'hookup', 'hot singles', 'erotic', 'camgirl', 'boobs', 'orgasm', 'cum',
           'dildo', 'anal', 'blowjob', 'threesome', 'incest', 'milf', 'bdsm',
-          'kink', 'hardcore', 'masturbate', 'suck', 'pussy', 'cock', 'penis',
-          'vagina', 'clit', 'tits', 'ass', 'butt', 'spank', 'dominatrix',
-          'submissive', 'dominant', 'sexwork', 'sexworker', 'hooker', 'prostitute',
+          'kink', 'hardcore', 'masturbate', 'pussy', 'cock', 'penis',
+          'vagina', 'clit', 'tits', 'butt',
+          'submissive', 'sexwork', 'sexworker', 'hooker', 'prostitute',
           'lewd', 'r18', 'r-18', 'r 18'
         ],
         spam: [
-          'click here', 'free money', 'make money', 'work from home', 'get rich',
-          'buy now', 'limited time', 'act now', 'guarantee', 'risk free',
-          'no obligation', 'call now', 'urgent', 'congratulations'
+          
         ],
         negativity: [
-          'hate', 'angry', 'furious', 'disgusting', 'terrible', 'awful',
-          'worst', 'horrible', 'stupid', 'idiot', 'moron', 'pathetic',
-          'losers', 'fail', 'failing', 'disappointed', 'frustrated'
+          
         ],
         promotions: [
-          'sponsored', 'ad', 'advertisement', 'promote', 'sale', 'discount',
-          'offer', 'deal', 'coupon', 'promo', 'affiliate', 'partnership'
+          'sponsored', 'ad', 'advertisement',
+          'offer', 'deal', 'coupon', 'promo', 'affiliate'
         ]
       };
 
