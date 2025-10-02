@@ -7,25 +7,22 @@ class ContentDetector {
       politics: [
         'trump', 'biden', 'modi', 'election', 'democrat', 'republican',
         'congress', 'senate', 'political',
-        'liberal', 'conservative', 'left wing', 'right wing', 'maga', 'gop',
+         'left wing', 'right wing',
         'politics', 'government', 'minister', 'parliament', 'bjp', 'leftist',
-        'rightwing', 'socialist', 'assembly','mp', 'mla', 'lok sabha', 'rajya sabha'
+        'rightwing', 'socialist', 'assembly', 'mla', 'lok sabha', 'rajya sabha'
       ],
       violence: [
-        'kill', 'murder', 'death', 'dead',
-        'shooting', 'weapon', 'bomb', 'explosion', 'terror', 'war',
-         'blood', 'bloody', 'assault','terrorist',
-        'riot', 'crime', 'stab', 'rape', 'injury', 'torture', 'hostage',
-        'execute', 'lynch', 'massacre', 'genocide', 'homicide', 'suicide',
-        'selfharm', 'harm', 'hurt', 'aggression', 'brutal',
-        'victim', 'perpetrator'
+        'kill', 'murder',
+        'shooting', 'weapon', 'bomb', 'explosion', 'terror', 'war', 'assault','terrorist',
+        'riot', 'stab', 'rape', 'torture', 'hostage', 'lynch', 'massacre', 'genocide', 'homicide', 'suicide',
+        'selfharm', 'perpetrator'
       ],
       adult: [
-        'porn', 'sex', 'nude', 'naked', 'nsfw', 'xxx', 'sexy', 'escort', 'hookup', 'hot singles', 'erotic', 'camgirl', 'boobs', 'strip', 'orgasm', 'cum',
+        'porn', 'sex', 'nude', 'naked', 'nsfw', 'xxx', 'sexy', 'escort', 'hookup', 'hot singles', 'erotic', 'camgirl', 'boobs', 'orgasm', 'cum',
         'dildo', 'anal', 'blowjob', 'threesome', 'incest', 'milf', 'bdsm',
         'kink', 'hardcore', 'masturbate', 'pussy', 'cock', 'penis',
-        'vagina', 'clit', 'tits', 'ass', 'butt', 'dominatrix',
-        'submissive', 'dominant', 'sexwork', 'sexworker', 'hooker', 'prostitute',
+        'vagina', 'clit', 'tits', 'butt',
+        'submissive', 'sexwork', 'sexworker', 'hooker', 'prostitute',
         'lewd', 'r18', 'r-18', 'r 18'
       ],
       spam: [
