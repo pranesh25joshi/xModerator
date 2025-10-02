@@ -80,8 +80,11 @@
   function handleStorageChanges(changes, namespace) {
     if (changes.xModeratorSettings) {
       console.log('🔄 xModerator: Settings changed', changes.xModeratorSettings);
-      settings = { ...settings, ...changes.xModeratorSettings.newValue };
+      settings = changes.xModeratorSettings.newValue;
       isEnabled = settings.enabled;
+      
+      console.log('🔄 xModerator: Updated settings:', settings);
+      console.log('🔄 xModerator: Category settings:', settings.categories);
       
       if (isEnabled) {
         startContentMonitoring();
@@ -329,13 +332,16 @@
       console.log('🔍 xModerator: Analyzed tweet:', {
         text: tweetData.text.substring(0, 50) + '...',
         categories: analysis.categories,
-        shouldBlock: analysis.shouldBlock
+        shouldBlock: analysis.shouldBlock,
+        enabledCategories: settings.categories
       });
 
       // Check if any enabled categories were detected
-      const blockedCategories = analysis.categories.filter(cat => 
-        settings.categories[cat.category] === true
-      );
+      const blockedCategories = analysis.categories.filter(cat => {
+        const isEnabled = settings.categories[cat.category] === true;
+        console.log(`  Category ${cat.category}: detected=${true}, enabled=${isEnabled}`);
+        return isEnabled;
+      });
 
       if (analysis.shouldBlock && blockedCategories.length > 0) {
         const primaryCategory = blockedCategories[0].category;
